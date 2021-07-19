@@ -19,6 +19,8 @@ namespace NaughtyDoggy.EntityControllers
         private Transform _compassTrans;
         private Camera _mainCam;
         private Animator _animator;
+        private bool _noInputTrigger = true;
+        private Vector2 _lastRawInput;
 
         private void Awake()
         {
@@ -37,12 +39,24 @@ namespace NaughtyDoggy.EntityControllers
         // Update is called once per frame
         void FixedUpdate()
         {
+            if (_noInputTrigger)
+            {
+                Vector2 animInput = ResolveAnimatorInput(_lastRawInput);
+                
+                _animator.SetFloat("DirInputX", animInput.x);
+                _animator.SetFloat("DirInputY", animInput.y);
+            }
+            else
+            {
+                _noInputTrigger = true;
+            }
             // SteeringMovement(_plDestForward);
         }
         
         public void HandleDirectionInput(InputAction.CallbackContext cxt)
         {
             Vector2 rawAxis = cxt.ReadValue<Vector2>();
+            _lastRawInput = rawAxis;
             
             Vector2 animInput = ResolveAnimatorInput(rawAxis);
             
@@ -53,6 +67,8 @@ namespace NaughtyDoggy.EntityControllers
         
         public Vector2 ResolveAnimatorInput(Vector2 rawAxisInput)
         {
+            // todo : add a bool to remind recalculation every frame during key hold
+            _noInputTrigger = false;
             Vector2 animInput = Vector2.zero;
             Vector2 animState = new Vector2(_animator.GetFloat("DirInputX"), _animator.GetFloat("DirInputY"));
             
@@ -77,7 +93,7 @@ namespace NaughtyDoggy.EntityControllers
             }
             else if(alreadyTurning) // already turning in some direction
             {
-                animInput.x = animState.x;
+                animInput.x = Mathf.Sign(animState.x);
                 animInput.y = 0.0f;
             }
             else // force turning clockwise
@@ -85,6 +101,8 @@ namespace NaughtyDoggy.EntityControllers
                 animInput.x = 1.0f;
                 animInput.y = 0.0f;
             }
+
+            Debug.Log("animInput" + animInput);
 
             return animInput;
         }
