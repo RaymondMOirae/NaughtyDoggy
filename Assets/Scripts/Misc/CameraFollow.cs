@@ -1,8 +1,5 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.IMGUI.Controls;
 using UnityEngine;
+using NaughtyDoggy.Helper;
 
 namespace NaughtyDoggy.Misc
 {
@@ -18,7 +15,7 @@ namespace NaughtyDoggy.Misc
 
         void Update()
         {
-            transform.position = _player.transform.position + _offset;
+            transform.position = MathHelper.Vector3X0Z(_player.transform.position) + _offset;
         }
     }
 }

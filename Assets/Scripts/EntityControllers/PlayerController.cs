@@ -5,7 +5,7 @@ using NaughtyDoggy.Input;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Utility;
+using NaughtyDoggy.Helper;
 
 namespace NaughtyDoggy.EntityControllers 
 {
@@ -14,7 +14,6 @@ namespace NaughtyDoggy.EntityControllers
         private const float LeftStickDeadZone = 0.125f;
         private const float TurningThresholdAngle = 120.0f;
         
-        [SerializeField] private Vector2 _plDestForward;
         public PlayerInputActions _input;
         private Transform _compassTrans;
         private Camera _mainCam;
@@ -50,7 +49,6 @@ namespace NaughtyDoggy.EntityControllers
             {
                 _noInputTrigger = true;
             }
-            // SteeringMovement(_plDestForward);
         }
         
         public void HandleDirectionInput(InputAction.CallbackContext cxt)
@@ -67,7 +65,6 @@ namespace NaughtyDoggy.EntityControllers
         
         public Vector2 ResolveAnimatorInput(Vector2 rawAxisInput)
         {
-            // todo : add a bool to remind recalculation every frame during key hold
             _noInputTrigger = false;
             Vector2 animInput = Vector2.zero;
             Vector2 animState = new Vector2(_animator.GetFloat("DirInputX"), _animator.GetFloat("DirInputY"));
@@ -79,7 +76,6 @@ namespace NaughtyDoggy.EntityControllers
             
             Vector2 desiredForward= MathHelper.Vector3XZ(_compassTrans.forward * rawAxisInput.y + _compassTrans.right * rawAxisInput.x);
             float sighedAngle = -1.0f * Vector2.SignedAngle(MathHelper.Vector3XZ(transform.forward), desiredForward);
-            
             
             // means the animator is already in turning state, and should wait for the turning
             bool alreadyTurning = animState.x != 0.0f;
@@ -101,8 +97,6 @@ namespace NaughtyDoggy.EntityControllers
                 animInput.x = 1.0f;
                 animInput.y = 0.0f;
             }
-
-            Debug.Log("animInput" + animInput);
 
             return animInput;
         }
