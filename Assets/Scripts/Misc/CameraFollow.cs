@@ -15,7 +15,7 @@ namespace NaughtyDoggy.Misc
 
         void Update()
         {
-            transform.position = MathHelper.Vector3X0Z(_player.transform.position) + _offset;
+            transform.position = MathHelper.Vec3X0Z(_player.transform.position) + _offset;
         }
     }
 }

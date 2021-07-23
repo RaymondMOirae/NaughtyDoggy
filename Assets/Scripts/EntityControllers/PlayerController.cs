@@ -74,8 +74,8 @@ namespace NaughtyDoggy.EntityControllers
                 return animInput;
             }
             
-            Vector2 desiredForward= MathHelper.Vector3XZ(_compassTrans.forward * rawAxisInput.y + _compassTrans.right * rawAxisInput.x);
-            float sighedAngle = -1.0f * Vector2.SignedAngle(MathHelper.Vector3XZ(transform.forward), desiredForward);
+            Vector2 desiredForward= MathHelper.Vec3XZ(_compassTrans.forward * rawAxisInput.y + _compassTrans.right * rawAxisInput.x);
+            float sighedAngle = -1.0f * Vector2.SignedAngle(MathHelper.Vec3XZ(transform.forward), desiredForward);
             
             // means the animator is already in turning state, and should wait for the turning
             bool alreadyTurning = animState.x != 0.0f;
