@@ -5,14 +5,17 @@ using UnityEngine;
 
 public class SingletonHelper<T> : MonoBehaviour where T : SingletonHelper<T>
 {
-    private static T _instance;
-    public static T GetInstance => _instance;
+    private static T _instance = null;
+    public static T Instance => _instance;
 
     protected virtual void Awake()
     {
-        if (_instance is null)
+        if (!_instance)
         {
             _instance = this as T;
+        }else if (_instance && _instance != this)
+        {
+            Destroy(gameObject);
         }
     }
 }

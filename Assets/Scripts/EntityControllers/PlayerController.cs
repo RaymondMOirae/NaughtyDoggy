@@ -14,17 +14,11 @@ namespace NaughtyDoggy.EntityControllers
         private const float LeftStickDeadZone = 0.125f;
         private const float TurningThresholdAngle = 120.0f;
         
-        public PlayerInputActions _input;
         private Transform _compassTrans;
         private Camera _mainCam;
         private Animator _animator;
         private bool _noInputTrigger = true;
         private Vector2 _lastRawInput;
-
-        private void Awake()
-        {
-            _input = new PlayerInputActions();
-        }
 
         // Start is called before the first frame update
         void Start()
@@ -38,32 +32,33 @@ namespace NaughtyDoggy.EntityControllers
         // Update is called once per frame
         void FixedUpdate()
         {
+            // persisit per frame animator updat
             if (_noInputTrigger)
             {
-                Vector2 animInput = ResolveAnimatorInput(_lastRawInput);
-                
-                _animator.SetFloat("DirInputX", animInput.x);
-                _animator.SetFloat("DirInputY", animInput.y);
+                UpdateAnimationParameter(_lastRawInput);
             }
             else
             {
                 _noInputTrigger = true;
             }
         }
+
+        private void UpdateAnimationParameter(Vector2 playerInput)
+        {
+                Vector2 animInput = ResolveInputToAnimator(playerInput);
+                
+                _animator.SetFloat("DirInputX", animInput.x);
+                _animator.SetFloat("DirInputY", animInput.y);
+        }
         
         public void HandleDirectionInput(InputAction.CallbackContext cxt)
         {
             Vector2 rawAxis = cxt.ReadValue<Vector2>();
             _lastRawInput = rawAxis;
-            
-            Vector2 animInput = ResolveAnimatorInput(rawAxis);
-            
-            _animator.SetFloat("DirInputX", animInput.x);
-            _animator.SetFloat("DirInputY", animInput.y);
+            UpdateAnimationParameter(rawAxis);
         }
 
-        
-        public Vector2 ResolveAnimatorInput(Vector2 rawAxisInput)
+        public Vector2 ResolveInputToAnimator(Vector2 rawAxisInput)
         {
             _noInputTrigger = false;
             Vector2 animInput = Vector2.zero;
@@ -103,19 +98,9 @@ namespace NaughtyDoggy.EntityControllers
 
         private void SetupInputs()
         {
-            _input.PlayerController_Map.PlayerActions.performed += context => HandleDirectionInput(context);
-            _input.PlayerController_Map.PlayerActions.started   += context => HandleDirectionInput(context);
-            _input.PlayerController_Map.PlayerActions.canceled  += context => HandleDirectionInput(context);
-        }
-
-        private void OnEnable()
-        {
-            _input.Enable();
-        }
-
-        private void OnDisable()
-        {
-            _input.Disable();
+            PlayerInputs.GetInstance.PlayerController_Map.PlayerActions.started   += context => HandleDirectionInput(context);
+            PlayerInputs.GetInstance.PlayerController_Map.PlayerActions.performed += context => HandleDirectionInput(context);
+            PlayerInputs.GetInstance.PlayerController_Map.PlayerActions.canceled  += context => HandleDirectionInput(context);
         }
     }
 }
