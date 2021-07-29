@@ -16,7 +16,7 @@ namespace NaughtyDoggy.Interactive
 
         void Start()
         {
-            PlayerInputs.GetInstance.PlayerController_Map.Interact.performed += context => DestroyMesh();
+            //PlayerInputs.GetInstance.PlayerController_Map.Interact.performed += context => DestroyMesh();
         }
 
         public void DestroyMesh()

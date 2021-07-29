@@ -13,13 +13,13 @@ namespace NaughtyDoggy.Interactive
 
         private void DeactivateSign()
         {
-            Debug.Log("Deactivate");
+            //Debug.Log("Deactivate");
             _interactiveSign.SetActive(false);
         }
         
         private void ActivateSign()
         {
-            Debug.Log("Avtivate");
+            //Debug.Log("Avtivate");
             _interactiveSign.SetActive(true);
         }
 

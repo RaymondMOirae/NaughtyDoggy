@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using NaughtyDoggy.Helper;
+using NaughtyDoggy.Interactive;
 
 namespace NaughtyDoggy.PlayerControls
 {
@@ -14,6 +15,8 @@ namespace NaughtyDoggy.PlayerControls
         private Animator _animator;
         private bool _noInputTrigger = true;
         private Vector2 _lastRawInput;
+
+        private InteractionTargetDetector _detector;
 
         // Start is called before the first frame update
         void Start()
@@ -110,6 +113,7 @@ namespace NaughtyDoggy.PlayerControls
             _animator = GetComponent<Animator>();
             _mainCam = Camera.main;
             _compassTrans = _mainCam.GetComponentInChildren<Transform>();
+            _detector = transform.Find("Detector").GetComponent<InteractionTargetDetector>();
         }
         
         #endregion
@@ -118,7 +122,10 @@ namespace NaughtyDoggy.PlayerControls
 
         private void LaunchInteraction()
         {
-            
+            if (_detector.FocusTarget)
+            {
+                _detector.FocusTarget.HandleInteraction();
+            }
         }
 
         #endregion

@@ -13,6 +13,8 @@ namespace NaughtyDoggy.Interactive
         [SerializeField] private float checkRadius;
         [SerializeField] private LayerMask interactiveLayer;
         [SerializeField] private BoxCollider _contactor;
+        private InteractiveBase _target;
+        public InteractiveBase FocusTarget => _target;
 
         private void Start()
         {
@@ -36,6 +38,7 @@ namespace NaughtyDoggy.Interactive
             if (filteredResult.Any())
             {
                 filteredResult.First().BroadcastMessage("ActivateSign", SendMessageOptions.RequireReceiver);
+                _target = filteredResult.First().GetComponent<InteractiveBase>();
                 foreach (Transform t in filteredResult.Skip(1))
                 {
                     t.BroadcastMessage("DeactivateSign", SendMessageOptions.RequireReceiver);
@@ -61,8 +64,12 @@ namespace NaughtyDoggy.Interactive
 
         private void OnTriggerExit(Collider other)
         {
-            if(other.CompareTag("InteractiveEntity"))
+            if (other.CompareTag("InteractiveEntity"))
+            {
                 other.BroadcastMessage("DeactivateSign", SendMessageOptions.RequireReceiver);
+                _target = null;
+            }
+                
         }
     }
 
