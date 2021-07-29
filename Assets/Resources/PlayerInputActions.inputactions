@@ -6,10 +6,18 @@
             "id": "8719d7e2-ddd3-48ba-9a76-c4117a063f47",
             "actions": [
                 {
-                    "name": "PlayerActions",
+                    "name": "Movement",
                     "type": "Value",
                     "id": "9ac0c7d4-0c38-4c58-bac3-0ef2712a0c6d",
                     "expectedControlType": "Vector2",
+                    "processors": "StickDeadzone",
+                    "interactions": ""
+                },
+                {
+                    "name": "Interact",
+                    "type": "Button",
+                    "id": "8f2d6766-dcb7-4d4b-bc3a-d1f6f93e1f35",
+                    "expectedControlType": "Button",
                     "processors": "StickDeadzone",
                     "interactions": ""
                 }
@@ -22,7 +30,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "PlayerActions",
+                    "action": "Movement",
                     "isComposite": true,
                     "isPartOfComposite": false
                 },
@@ -33,7 +41,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "PlayerActions",
+                    "action": "Movement",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -44,7 +52,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "PlayerActions",
+                    "action": "Movement",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -55,7 +63,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "PlayerActions",
+                    "action": "Movement",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -66,7 +74,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "PlayerActions",
+                    "action": "Movement",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -77,7 +85,18 @@
                     "interactions": "",
                     "processors": "StickDeadzone",
                     "groups": "",
-                    "action": "PlayerActions",
+                    "action": "Movement",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ef0bcf7e-506c-405d-821a-1475957c462b",
+                    "path": "<XInputController>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Interact",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

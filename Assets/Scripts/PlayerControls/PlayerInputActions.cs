@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
 
-namespace NaughtyDoggy.Input
+namespace NaughtyDoggy.PlayerControls
 {
     public class @PlayerInputActions : IInputActionCollection, IDisposable
     {
@@ -21,10 +21,18 @@ namespace NaughtyDoggy.Input
             ""id"": ""8719d7e2-ddd3-48ba-9a76-c4117a063f47"",
             ""actions"": [
                 {
-                    ""name"": ""PlayerActions"",
+                    ""name"": ""Movement"",
                     ""type"": ""Value"",
                     ""id"": ""9ac0c7d4-0c38-4c58-bac3-0ef2712a0c6d"",
                     ""expectedControlType"": ""Vector2"",
+                    ""processors"": ""StickDeadzone"",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""Interact"",
+                    ""type"": ""Button"",
+                    ""id"": ""8f2d6766-dcb7-4d4b-bc3a-d1f6f93e1f35"",
+                    ""expectedControlType"": ""Button"",
                     ""processors"": ""StickDeadzone"",
                     ""interactions"": """"
                 }
@@ -37,7 +45,7 @@ namespace NaughtyDoggy.Input
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""PlayerActions"",
+                    ""action"": ""Movement"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
@@ -48,7 +56,7 @@ namespace NaughtyDoggy.Input
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""PlayerActions"",
+                    ""action"": ""Movement"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -59,7 +67,7 @@ namespace NaughtyDoggy.Input
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""PlayerActions"",
+                    ""action"": ""Movement"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -70,7 +78,7 @@ namespace NaughtyDoggy.Input
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""PlayerActions"",
+                    ""action"": ""Movement"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -81,7 +89,7 @@ namespace NaughtyDoggy.Input
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""PlayerActions"",
+                    ""action"": ""Movement"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -92,7 +100,18 @@ namespace NaughtyDoggy.Input
                     ""interactions"": """",
                     ""processors"": ""StickDeadzone"",
                     ""groups"": """",
-                    ""action"": ""PlayerActions"",
+                    ""action"": ""Movement"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ef0bcf7e-506c-405d-821a-1475957c462b"",
+                    ""path"": ""<XInputController>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Interact"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -103,7 +122,8 @@ namespace NaughtyDoggy.Input
 }");
             // PlayerController_Map
             m_PlayerController_Map = asset.FindActionMap("PlayerController_Map", throwIfNotFound: true);
-            m_PlayerController_Map_PlayerActions = m_PlayerController_Map.FindAction("PlayerActions", throwIfNotFound: true);
+            m_PlayerController_Map_Movement = m_PlayerController_Map.FindAction("Movement", throwIfNotFound: true);
+            m_PlayerController_Map_Interact = m_PlayerController_Map.FindAction("Interact", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -153,12 +173,14 @@ namespace NaughtyDoggy.Input
         // PlayerController_Map
         private readonly InputActionMap m_PlayerController_Map;
         private IPlayerController_MapActions m_PlayerController_MapActionsCallbackInterface;
-        private readonly InputAction m_PlayerController_Map_PlayerActions;
+        private readonly InputAction m_PlayerController_Map_Movement;
+        private readonly InputAction m_PlayerController_Map_Interact;
         public struct PlayerController_MapActions
         {
             private @PlayerInputActions m_Wrapper;
             public PlayerController_MapActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
-            public InputAction @PlayerActions => m_Wrapper.m_PlayerController_Map_PlayerActions;
+            public InputAction @Movement => m_Wrapper.m_PlayerController_Map_Movement;
+            public InputAction @Interact => m_Wrapper.m_PlayerController_Map_Interact;
             public InputActionMap Get() { return m_Wrapper.m_PlayerController_Map; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -168,23 +190,30 @@ namespace NaughtyDoggy.Input
             {
                 if (m_Wrapper.m_PlayerController_MapActionsCallbackInterface != null)
                 {
-                    @PlayerActions.started -= m_Wrapper.m_PlayerController_MapActionsCallbackInterface.OnPlayerActions;
-                    @PlayerActions.performed -= m_Wrapper.m_PlayerController_MapActionsCallbackInterface.OnPlayerActions;
-                    @PlayerActions.canceled -= m_Wrapper.m_PlayerController_MapActionsCallbackInterface.OnPlayerActions;
+                    @Movement.started -= m_Wrapper.m_PlayerController_MapActionsCallbackInterface.OnMovement;
+                    @Movement.performed -= m_Wrapper.m_PlayerController_MapActionsCallbackInterface.OnMovement;
+                    @Movement.canceled -= m_Wrapper.m_PlayerController_MapActionsCallbackInterface.OnMovement;
+                    @Interact.started -= m_Wrapper.m_PlayerController_MapActionsCallbackInterface.OnInteract;
+                    @Interact.performed -= m_Wrapper.m_PlayerController_MapActionsCallbackInterface.OnInteract;
+                    @Interact.canceled -= m_Wrapper.m_PlayerController_MapActionsCallbackInterface.OnInteract;
                 }
                 m_Wrapper.m_PlayerController_MapActionsCallbackInterface = instance;
                 if (instance != null)
                 {
-                    @PlayerActions.started += instance.OnPlayerActions;
-                    @PlayerActions.performed += instance.OnPlayerActions;
-                    @PlayerActions.canceled += instance.OnPlayerActions;
+                    @Movement.started += instance.OnMovement;
+                    @Movement.performed += instance.OnMovement;
+                    @Movement.canceled += instance.OnMovement;
+                    @Interact.started += instance.OnInteract;
+                    @Interact.performed += instance.OnInteract;
+                    @Interact.canceled += instance.OnInteract;
                 }
             }
         }
         public PlayerController_MapActions @PlayerController_Map => new PlayerController_MapActions(this);
         public interface IPlayerController_MapActions
         {
-            void OnPlayerActions(InputAction.CallbackContext context);
+            void OnMovement(InputAction.CallbackContext context);
+            void OnInteract(InputAction.CallbackContext context);
         }
     }
 }

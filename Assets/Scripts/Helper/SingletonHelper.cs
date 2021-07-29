@@ -6,7 +6,7 @@ using UnityEngine;
 public class SingletonHelper<T> : MonoBehaviour where T : SingletonHelper<T>
 {
     private static T _instance = null;
-    public static T Instance => _instance;
+    protected static T Instance => _instance;
 
     protected virtual void Awake()
     {

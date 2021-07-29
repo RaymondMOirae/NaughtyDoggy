@@ -1,13 +1,8 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using NaughtyDoggy.Input;
-using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using NaughtyDoggy.Helper;
 
-namespace NaughtyDoggy.EntityControllers 
+namespace NaughtyDoggy.PlayerControls
 {
     public class PlayerController : MonoBehaviour
     {
@@ -23,12 +18,10 @@ namespace NaughtyDoggy.EntityControllers
         // Start is called before the first frame update
         void Start()
         {
-            SetupInputs();
-            _animator = GetComponent<Animator>();
-            _mainCam = Camera.main;
-            _compassTrans = _mainCam.GetComponentInChildren<Transform>();
+            BindInputs();
+            InitComponents();
         }
-
+        
         // Update is called once per frame
         void FixedUpdate()
         {
@@ -42,6 +35,8 @@ namespace NaughtyDoggy.EntityControllers
                 _noInputTrigger = true;
             }
         }
+
+        #region Animation&Movement
 
         private void UpdateAnimationParameter(Vector2 playerInput)
         {
@@ -96,12 +91,37 @@ namespace NaughtyDoggy.EntityControllers
             return animInput;
         }
 
-        private void SetupInputs()
+        
+        
+        #endregion
+
+        #region Inits
+
+        private void BindInputs()
         {
-            PlayerInputs.GetInstance.PlayerController_Map.PlayerActions.started   += context => HandleDirectionInput(context);
-            PlayerInputs.GetInstance.PlayerController_Map.PlayerActions.performed += context => HandleDirectionInput(context);
-            PlayerInputs.GetInstance.PlayerController_Map.PlayerActions.canceled  += context => HandleDirectionInput(context);
+            PlayerInputs.GetInstance.PlayerController_Map.Movement.started   += context => HandleDirectionInput(context);
+            PlayerInputs.GetInstance.PlayerController_Map.Movement.performed += context => HandleDirectionInput(context);
+            PlayerInputs.GetInstance.PlayerController_Map.Movement.canceled  += context => HandleDirectionInput(context);
+            PlayerInputs.GetInstance.PlayerController_Map.Interact.performed += context => LaunchInteraction();
         }
+        
+        private void InitComponents()
+        {
+            _animator = GetComponent<Animator>();
+            _mainCam = Camera.main;
+            _compassTrans = _mainCam.GetComponentInChildren<Transform>();
+        }
+        
+        #endregion
+
+        #region InteractiveActions
+
+        private void LaunchInteraction()
+        {
+            
+        }
+
+        #endregion
     }
 }
 

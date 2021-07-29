@@ -1,12 +1,10 @@
-﻿using System.Runtime.CompilerServices;
-using UnityEngine;
+﻿using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace NaughtyDoggy.Helper
 {
     public class MathHelper
     {
-        // vector converters
         public static Vector2 Vec3XZ(Vector3 v) 
             => new Vector2(v.x, v.z);
 

@@ -169,8 +169,6 @@ public class PBF_Solver : MonoBehaviour
 
     private void DrawParticle()
     {
-        // Graphics.DrawMeshInstancedIndirect(particleMesh, 0, particleMat, instancingBounds, 
-        //     _instancingArgsBuffer, 0, null, ShadowCastingMode.Off, false);
         particleMat.SetBuffer("ParticleBuffer", _particleBufferREAD);
         Graphics.DrawMeshInstancedIndirect(particleMesh, 0, particleMat, instancingBounds,
             _instancingArgsBuffer);

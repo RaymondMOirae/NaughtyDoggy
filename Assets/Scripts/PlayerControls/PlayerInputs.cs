@@ -1,11 +1,7 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using NaughtyDoggy.Input;
-using UnityEngine;
-using UnityEngine.InputSystem;
 
-namespace NaughtyDoggy.Input
+
+
+namespace NaughtyDoggy.PlayerControls
 {
     public class PlayerInputs : SingletonHelper<PlayerInputs>
     {
