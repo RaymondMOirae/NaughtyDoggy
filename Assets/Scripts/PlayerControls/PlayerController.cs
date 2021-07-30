@@ -105,7 +105,7 @@ namespace NaughtyDoggy.PlayerControls
             PlayerInputs.GetInstance.PlayerController_Map.Movement.started   += context => HandleDirectionInput(context);
             PlayerInputs.GetInstance.PlayerController_Map.Movement.performed += context => HandleDirectionInput(context);
             PlayerInputs.GetInstance.PlayerController_Map.Movement.canceled  += context => HandleDirectionInput(context);
-            PlayerInputs.GetInstance.PlayerController_Map.Interact.performed += context => LaunchInteraction();
+            PlayerInputs.GetInstance.PlayerController_Map.Interact.started += context => LaunchInteraction();
         }
         
         private void InitComponents()
