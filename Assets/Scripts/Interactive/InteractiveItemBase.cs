@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace NaughtyDoggy.Interactive
 {
-    public class InteractiveBase : MonoBehaviour
+    public class InteractiveItemBase : MonoBehaviour
     {
         [SerializeField] private GameObject _interactiveSign;
         
@@ -23,9 +23,9 @@ namespace NaughtyDoggy.Interactive
             _interactiveSign.SetActive(true);
         }
 
-        public void HandleInteraction()
+        public virtual void HandleInteraction()
         {
-            Debug.Log("Interact!");
+            Debug.Log("Interact! " + gameObject.name);
         }
     }
 }

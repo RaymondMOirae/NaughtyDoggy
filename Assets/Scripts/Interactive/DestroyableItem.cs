@@ -4,7 +4,7 @@ using NaughtyDoggy.PlayerControls;
 
 namespace NaughtyDoggy.Interactive
 {
-    public class Destroyer : MonoBehaviour
+    public class DestroyableItem : InteractiveItemBase
     {
         private bool edgeSet = false;
         private Vector3 edgeVertex = Vector3.zero;
@@ -14,11 +14,11 @@ namespace NaughtyDoggy.Interactive
         public int CutCascades = 3;
         public float ExplodeForce = 250.0f;
 
-        void Start()
+        public override void HandleInteraction()
         {
-            //PlayerInputs.GetInstance.PlayerController_Map.Interact.performed += context => DestroyMesh();
+            base.HandleInteraction();
+            DestroyMesh();
         }
-
         public void DestroyMesh()
         {
             var originalMesh = GetComponent<MeshFilter>().mesh;
@@ -267,7 +267,7 @@ namespace NaughtyDoggy.Interactive
                     Triangles[i] = _Triangles[i].ToArray();
             }
 
-            public void MakeGameobject(Destroyer original)
+            public void MakeGameobject(DestroyableItem original)
             {
                 GameObject = new GameObject(original.name);
                 GameObject.transform.position = original.transform.position;
