@@ -1,0 +1,270 @@
+#pragma kernel PredictPosition
+
+#pragma kernel CalculateLambda
+#pragma kernel CalculateDeltaPos
+
+#pragma kernel UpdatePosition
+
+#pragma kernel BufferSwap
+
+struct ParticleData
+{
+    float3 curPosition;
+    float3 nextPosition;
+    float3 deltaPosition;
+    float3 extForce;
+    float3 velocity;
+    float lambda;
+};
+
+RWStructuredBuffer<ParticleData> ParticleBufferREAD;
+RWStructuredBuffer<ParticleData> ParticleBufferWRITE;
+// RWStructuredBuffer<ParticleData> WallParticleBuffer;
+
+float RestDensity;
+int ParticleNum;
+// int WallParticleNum;
+float4 Gravity;
+float DeltaTime;
+float ParticleMass;
+
+float KernelRadius;
+float KernelRadius_SQU;
+float DeltaQ;
+float NeighborRadius;
+
+// PBF 4.Tensile Instability parameters
+float K;
+float N;
+float EpsilonLambda;
+
+// XSPH Viscosity
+float C;
+
+float Poly6Term;
+float SpikyTerm;
+
+float WDeltaQ;
+
+float4 BoundaryMax;
+float4 BoundaryMin;
+
+float3 CheckBoundaries(float3 position);
+float SquaredEuclideanDistance(float3 posA, float3 posB);
+float Poly6Kernel(float3 posP, float3 posNeighbor);
+float3 SpikyKernel(float3 posP, float3 posNeighbor);
+
+// todo: do something about LOOPS
+[numthreads(32,1,1)]
+void PredictPosition(uint3 id : SV_DispatchThreadID)
+{
+    // Algorithm 1 Simulation Loop:
+    // Loop line 1~4: 
+    //      - Apply forces
+    //      - Predict position
+    //      - Check Boundaries
+    ParticleBufferWRITE[id.x].extForce = Gravity.xyz;
+    ParticleBufferWRITE[id.x].velocity = ParticleBufferREAD[id.x].velocity + ParticleBufferWRITE[id.x].extForce * DeltaTime;
+    ParticleBufferWRITE[id.x].nextPosition = ParticleBufferWRITE[id.x].curPosition + ParticleBufferWRITE[id.x].velocity * DeltaTime;
+    ParticleBufferWRITE[id.x].nextPosition = CheckBoundaries(ParticleBufferWRITE[id.x].nextPosition);
+}
+
+[numthreads(32,1,1)]
+void CalculateLambda(uint3 id : SV_DispatchThreadID)
+{
+    // Loop line 5~19:
+    // Loop line 9~11:
+    //      calculate lambda for each particle
+    //      ergod every particle, use nextPosition to estimate density & calculate gradient
+    
+    float3 curPosition = ParticleBufferWRITE[id.x].nextPosition;
+
+    // - RESOLVE DENSITY
+    float density = 0.0;
+    for(int i = 0; i < ParticleNum; i++)
+    {
+        float3 neighborPosition = ParticleBufferWRITE[i].nextPosition;
+        if(length(curPosition - neighborPosition) < NeighborRadius)
+        {
+            density += ParticleMass * Poly6Kernel(curPosition, neighborPosition);
+        }
+    }
+    
+    // for(int i = 0; i < WallParticleNum; i++)
+    // {
+    //     float3 neighborPosition = WallParticleBuffer[i].nextPosition;
+    //     if(length(curPosition - neighborPosition) < NeighborRadius)
+    //     {
+    //         density += ParticleMass * Poly6Kernel(curPosition, neighborPosition);
+    //     }
+    // }
+    
+    float equationOfStateTerm = (density / RestDensity) - 1.0f;
+
+    float3 gradientVectorSum;
+    float gradientMagnitudeSum;
+
+    for(int j = 0; j < ParticleNum; j++)
+    {
+        float3 neighborPosition = ParticleBufferWRITE[j].nextPosition;
+        if(length(curPosition - neighborPosition) < NeighborRadius)
+        {
+            float3 gradient = SpikyKernel(curPosition, neighborPosition) / RestDensity;
+            gradientVectorSum += gradient;
+            gradientMagnitudeSum += pow(gradient, 2.0f);
+        }
+    }
+
+    // for(int k = 0; k < WallParticleNum; k++)
+    // {
+    //     float3 neighborPosition = WallParticleBuffer[k].nextPosition;
+    //     if(length(curPosition - neighborPosition) < NeighborRadius)
+    //     {
+    //         float3 gradient = SpikyKernel(curPosition, neighborPosition) / RestDensity;
+    //         gradientVectorSum += gradient;
+    //         gradientMagnitudeSum += pow(gradient, 2.0f);
+    //     }
+    // }
+    
+    gradientMagnitudeSum += SquaredEuclideanDistance(gradientVectorSum, float3(0, 0, 0));
+    ParticleBufferWRITE[id.x].lambda = -1.0f * equationOfStateTerm / (gradientMagnitudeSum + EpsilonLambda);
+}
+
+[numthreads(32,1,1)]
+void CalculateDeltaPos(uint id : SV_DispatchThreadID)
+{
+    // Loop line12~15:
+    //      calculate delta position and perform collision detection & response
+
+        // resolve density -- to resolve inter particle distance
+    float3 deltaPosition = float3(0, 0, 0);
+    float3 curPosition = ParticleBufferWRITE[id.x].nextPosition;
+    
+    for(int i = 0; i < ParticleNum; i++)
+    {
+        float3 neighborPosition = ParticleBufferWRITE[i].nextPosition;
+        if(length(curPosition - neighborPosition) < NeighborRadius)
+        {
+            // calculate S_correction by PBF equation(13)
+            float sCorrection = Poly6Kernel(curPosition, neighborPosition) / WDeltaQ;
+            sCorrection = -1.0f * pow(abs(sCorrection), N) * K;
+            float lambdaCorrectionTerm = ParticleBufferWRITE[id.x].lambda + ParticleBufferWRITE[i].lambda + sCorrection;
+            float3 gradient = SpikyKernel(curPosition, neighborPosition);
+            float3 correctedGradient = gradient * lambdaCorrectionTerm;
+            deltaPosition += correctedGradient;
+        }
+    }
+    
+    // for(int i = 0; i < WallParticleNum; i++)
+    // {
+    //     float3 neighborPosition = WallParticleBuffer[i].nextPosition;
+    //     if(length(curPosition - neighborPosition) < NeighborRadius)
+    //     {
+    //         // calculate S_correction by PBF equation(13)
+    //         float sCorrection = Poly6Kernel(curPosition, neighborPosition) / WDeltaQ;
+    //         sCorrection = -1.0f * pow(abs(sCorrection), N) * K;
+    //         float lambdaCorrectionTerm = ParticleBufferWRITE[id.x].lambda + WallParticleBuffer[i].lambda + sCorrection;
+    //         float3 gradient = SpikyKernel(curPosition, neighborPosition);
+    //         float3 correctedGradient = gradient * lambdaCorrectionTerm;
+    //         deltaPosition += correctedGradient;
+    //     }
+    // }
+    
+    ParticleBufferWRITE[id.x].deltaPosition = deltaPosition / RestDensity;
+
+    // Loop line 16~19:
+    //      update nextPosition with deltaPosition
+
+    ParticleBufferWRITE[id.x].nextPosition = ParticleBufferWRITE[id.x].nextPosition + ParticleBufferWRITE[id.x].deltaPosition;
+    ParticleBufferWRITE[id.x].nextPosition = CheckBoundaries(ParticleBufferWRITE[id.x].nextPosition);
+}
+
+[numthreads(32,1,1)]
+void UpdatePosition(uint3 id : SV_DispatchThreadID)
+{
+    // Loop line 20~24:
+    //      - update velocity
+    //      - apply verticity confinement & XSPH vescosity
+    //      - update nextPosition to curPosition
+    
+    float3 curPosition =  ParticleBufferWRITE[id.x].curPosition;
+    float3 nextPosition = ParticleBufferWRITE[id.x].nextPosition;
+
+    float3 direction = nextPosition - curPosition;
+    float3 nextVelocity = direction / DeltaTime;
+    ParticleBufferWRITE[id.x].velocity = nextVelocity;
+    
+    float3 viscosity = float3(0, 0, 0);
+    for(int i = 0; i < ParticleNum; i++)
+    {
+        float3 neighborPosition = ParticleBufferWRITE[i].nextPosition;
+        if(length(nextPosition - neighborPosition) < NeighborRadius)
+        {
+            // XSPH cescosity
+            float3 relaticeVelocity = nextVelocity - ParticleBufferWRITE[i].velocity;
+            float3 addedGradienVel = relaticeVelocity * Poly6Kernel(nextPosition, neighborPosition);
+            viscosity += addedGradienVel;
+        }
+    }
+    
+    // for(int i = 0; i < WallParticleNum; i++)
+    // {
+    //     float3 neighborPosition = WallParticleBuffer[i].nextPosition;
+    //     if(length(nextPosition - neighborPosition) < NeighborRadius)
+    //     {
+    //         // XSPH cescosity
+    //         float3 relaticeVelocity = nextVelocity - ParticleBufferWRITE[i].velocity;
+    //         float3 addedGradienVel = relaticeVelocity * Poly6Kernel(nextPosition, neighborPosition);
+    //         viscosity += addedGradienVel;
+    //     }
+    // }
+    
+    ParticleBufferWRITE[id.x].velocity += viscosity * C;
+    ParticleBufferWRITE[id.x].curPosition = nextPosition;
+}
+
+[numthreads(32,1,1)]
+void BufferSwap(uint id : SV_DispatchThreadID)
+{
+    ParticleBufferWRITE[id.x] = ParticleBufferREAD[id.x];
+}
+
+float SquaredEuclideanDistance(float3 posA, float3 posB)
+{
+    return dot(posA - posB, posA - posB);
+}
+
+float Poly6Kernel(float3 posP, float3 posNeighbor)
+{
+    // use Poly6 Kernel to estimate density
+    float euclideanDist_SQU = SquaredEuclideanDistance(posP, posNeighbor);
+    if(euclideanDist_SQU >= KernelRadius_SQU)
+    {
+        return 0.0f;
+    }else
+    {
+        return Poly6Term * pow(KernelRadius_SQU - euclideanDist_SQU, 3.0f);
+    }
+    
+}
+
+float3 SpikyKernel(float3 posP, float3 posNeighbor)
+{
+    // use Spiky Kernel to calculate gradient
+    float euclideanDist_SQU = SquaredEuclideanDistance(posP, posNeighbor);
+    if(euclideanDist_SQU >= KernelRadius_SQU || euclideanDist_SQU <= 0.0f)
+    {
+        return float3(0.0f , 0.0f, 0.0f);
+    }else
+    {
+        float euclideanDist = sqrt(euclideanDist_SQU);
+        float3 offsetFromNeighbor = normalize(posP - posNeighbor);
+        float term = (KernelRadius - euclideanDist) * (KernelRadius - euclideanDist) * SpikyTerm;
+        return offsetFromNeighbor * term;
+    }
+}
+
+float3 CheckBoundaries(float3 position)
+{
+    return clamp(position, BoundaryMin.xyz, BoundaryMax.xyz);
+}
