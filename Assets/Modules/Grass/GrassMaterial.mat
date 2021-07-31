@@ -11,7 +11,7 @@ Material:
   m_Shader: {fileID: 4800000, guid: 5c85a5030563caf4280f25ae2122b6e8, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
+  m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
@@ -60,6 +60,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - _AmbientWeight: 0.38
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
@@ -85,6 +86,6 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _GrassColor: {r: 0.59022015, g: 0.764151, b: 0.42172483, a: 1}
-    - _RootColor: {r: 0.5280268, g: 0.6792453, b: 0.39409044, a: 1}
+    - _RootColor: {r: 0.4713295, g: 0.60400003, b: 0.34913296, a: 1}
     - _TipColor: {r: 0.6694267, g: 0.9622642, b: 0.39489147, a: 1}
   m_BuildTextureStacks: []
