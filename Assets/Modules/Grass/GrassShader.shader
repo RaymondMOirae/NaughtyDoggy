@@ -15,7 +15,78 @@ Shader "Unlit/GrassShader"
     {
         Tags { "RenderType"="Opaque" }
         LOD 100
+        
+        CGINCLUDE
+            #include "UnityCG.cginc"
 
+            sampler2D _MainTex;
+            float4 _MainTex_ST;
+
+            float4 _PlayerPos;
+            float _PushDownWeight;
+            float _PushDownRadius;
+            
+            float4 _TipColor;
+            float4 _RootColor;
+            float _XSamplingMultiplier;
+            float _WaveStrength; 
+       
+
+            float4 CalcVertexPushDownNWavingToClipPos(float4 objSpacePos)
+            {
+                float4 worldPos = mul(unity_ObjectToWorld, objSpacePos);
+                float4 samplePos = float4(worldPos.xz, 0, 0);
+                
+                samplePos.x += _Time.x * _XSamplingMultiplier;
+                worldPos.x += objSpacePos.y * (tex2Dlod(_MainTex, samplePos * _MainTex_ST).r  - 0.4f)  * _WaveStrength;
+
+                // calculate collision offset
+                float4 pushDownDir = worldPos - _PlayerPos;
+                float offsetLen = length(pushDownDir);
+                pushDownDir = normalize(pushDownDir);
+                pushDownDir.y *= 0.2f;
+                worldPos += pushDownDir * saturate((_PushDownRadius - offsetLen) * objSpacePos.y)* _PushDownWeight ;
+
+                return UnityWorldToClipPos(worldPos);
+            }
+        ENDCG
+        
+        Pass
+        {
+            Tags{ "LightMode" = "ShadowCaster" }
+
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #pragma target 2.0
+            #pragma multi_compile_shadowcaster
+            #pragma multi_compile_instancing
+            
+            struct v2f
+            {
+                V2F_SHADOW_CASTER;
+                UNITY_VERTEX_OUTPUT_STEREO
+            };
+            
+            v2f vert(appdata_base v)
+            {
+                v2f o;
+ 
+                UNITY_SETUP_INSTANCE_ID(v);
+                
+                // UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
+                // TRANSFER_SHADOW_CASTER_NORMALOFFSET(o);
+                o.pos = CalcVertexPushDownNWavingToClipPos(v.vertex);
+                return o;
+            }
+
+            float4 frag (v2f i) : SV_Target
+            {
+                SHADOW_CASTER_FRAGMENT(i);
+            }
+            ENDCG
+        }
+        
         Pass
         {
             Tags { "LightMode" = "ForwardBase" }
@@ -24,7 +95,6 @@ Shader "Unlit/GrassShader"
             #pragma fragment frag
             #pragma multi_compile_fwdbase
 
-            #include "UnityCG.cginc"
             #include "AutoLight.cginc"
 
             struct appdata
@@ -41,40 +111,15 @@ Shader "Unlit/GrassShader"
                 SHADOW_COORDS(2)
             };
 
-            sampler2D _MainTex;
-            float4 _MainTex_ST;
-
-            float4 _PlayerPos;
-            float _PushDownWeight;
-            float _PushDownRadius;
-            
-            float4 _TipColor;
-            float4 _RootColor;
-            float _XSamplingMultiplier;
-            float _WaveStrength;
             float _AmbientWeight;
             
             v2f vert (appdata v)
             {
                 v2f o;
 
-                // calculate vertex's swaying offset
-                float4 worldPos = mul(unity_ObjectToWorld, v.vertex);
-                float4 samplePos = float4(worldPos.xz, 0, 0);
-                
-                samplePos.x += _Time.x * _XSamplingMultiplier;
-                worldPos.x += v.vertex.y * (tex2Dlod(_MainTex, samplePos * _MainTex_ST).r  - 0.4f)  * _WaveStrength;
-
-                // calculate collision offset
-                float4 pushDownDir = worldPos - _PlayerPos;
-                float offsetLen = length(pushDownDir);
-                pushDownDir = normalize(pushDownDir);
-                pushDownDir.y *= 0.2f;
-                worldPos += pushDownDir * saturate((_PushDownRadius - offsetLen) * v.vertex.y)* _PushDownWeight ;
-
                 o.objHeight = v.vertex.y;
-                o.pos= UnityWorldToClipPos(worldPos);
-                o.worldPos = worldPos;
+                o.pos = CalcVertexPushDownNWavingToClipPos(v.vertex);
+                o.worldPos = mul(unity_ObjectToWorld, v.vertex);
                 TRANSFER_VERTEX_TO_FRAGMENT(o)
                 return o;
             }

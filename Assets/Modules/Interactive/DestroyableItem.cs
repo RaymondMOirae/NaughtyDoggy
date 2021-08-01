@@ -19,6 +19,7 @@ namespace NaughtyDoggy.Interactive
             base.HandleInteraction();
             DestroyMesh();
         }
+        
         public void DestroyMesh()
         {
             var originalMesh = GetComponent<MeshFilter>().mesh;
@@ -59,7 +60,7 @@ namespace NaughtyDoggy.Interactive
 
             for (var i = 0; i < parts.Count; i++)
             {
-                parts[i].MakeGameobject(this);
+                parts[i].MakeGameObject(this);
                 parts[i].GameObject.GetComponent<Rigidbody>()
                     .AddForceAtPosition(parts[i].Bounds.center * ExplodeForce, transform.position);
             }
@@ -267,7 +268,7 @@ namespace NaughtyDoggy.Interactive
                     Triangles[i] = _Triangles[i].ToArray();
             }
 
-            public void MakeGameobject(DestroyableItem original)
+            public void MakeGameObject(DestroyableItem original)
             {
                 GameObject = new GameObject(original.name);
                 GameObject.transform.position = original.transform.position;
@@ -295,8 +296,12 @@ namespace NaughtyDoggy.Interactive
                 collider.convex = true;
 
                 var rigidbody = GameObject.AddComponent<Rigidbody>();
+            }
 
-                //Destroy(GameObject, UnityEngine.Random.Range(3f, 5f));
+            public void MakeFadingGameObject(DestroyableItem original)
+            {
+                MakeGameObject(original);
+                Destroy(GameObject, UnityEngine.Random.Range(3f, 5f));
             }
         }
     }
