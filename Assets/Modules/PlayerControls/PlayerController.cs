@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using NaughtyDoggy.Helper;
@@ -24,7 +25,12 @@ namespace NaughtyDoggy.PlayerControls
             BindInputs();
             InitComponents();
         }
-        
+
+        private void Update()
+        {
+            Shader.SetGlobalVector("_PlayerPos", transform.position);
+        }
+
         // Update is called once per frame
         void FixedUpdate()
         {
