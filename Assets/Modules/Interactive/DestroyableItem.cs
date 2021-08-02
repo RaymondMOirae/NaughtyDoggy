@@ -68,7 +68,7 @@ namespace NaughtyDoggy.Interactive
             Destroy(gameObject);
         }
 
-        private PartMesh GenerateMesh(PartMesh original, Plane plane, bool left)
+        private PartMesh GenerateMesh(PartMesh original, Plane plane, bool positiveSide)
         {
             var partMesh = new PartMesh() { };
             var ray1 = new Ray();
@@ -82,9 +82,9 @@ namespace NaughtyDoggy.Interactive
 
                 for (var j = 0; j < triangles.Length; j = j + 3)
                 {
-                    var sideA = plane.GetSide(original.Vertices[triangles[j]]) == left;
-                    var sideB = plane.GetSide(original.Vertices[triangles[j + 1]]) == left;
-                    var sideC = plane.GetSide(original.Vertices[triangles[j + 2]]) == left;
+                    var sideA = plane.GetSide(original.Vertices[triangles[j]]) == positiveSide;
+                    var sideB = plane.GetSide(original.Vertices[triangles[j + 1]]) == positiveSide;
+                    var sideC = plane.GetSide(original.Vertices[triangles[j + 2]]) == positiveSide;
 
                     var sideCount = (sideA ? 1 : 0) +
                                     (sideB ? 1 : 0) +
@@ -125,7 +125,7 @@ namespace NaughtyDoggy.Interactive
                     //first vertex = ancor
                     AddEdge(i,
                         partMesh,
-                        left ? plane.normal * -1f : plane.normal,
+                        positiveSide ? plane.normal * -1f : plane.normal,
                         ray1.origin + ray1.direction.normalized * enter1,
                         ray2.origin + ray2.direction.normalized * enter2,
                         Vector2.Lerp(original.UV[triangles[j + singleIndex]],
