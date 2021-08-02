@@ -4,7 +4,7 @@ using NaughtyDoggy.PlayerControls;
 
 namespace NaughtyDoggy.Interactive
 {
-    public class DestroyableItem : InteractiveItemBase
+    public class DestroyableItem : MonoBehaviour
     {
         private bool edgeSet = false;
         private Vector3 edgeVertex = Vector3.zero;
@@ -13,21 +13,22 @@ namespace NaughtyDoggy.Interactive
 
         public int CutCascades = 3;
         public float ExplodeForce = 250.0f;
+        public bool FillCrossSection;
+        public bool MakeFadingObj;
 
-        public override void HandleInteraction()
+        private void Response()
         {
-            base.HandleInteraction();
             DestroyMesh();
         }
-        
+
         public void DestroyMesh()
         {
-            var originalMesh = GetComponent<MeshFilter>().mesh;
+            Mesh originalMesh = GetComponent<MeshFilter>().mesh;
             originalMesh.RecalculateBounds();
-            var parts = new List<PartMesh>();
-            var subParts = new List<PartMesh>();
+            List<PartMesh> parts = new List<PartMesh>();
+            List<PartMesh> subParts = new List<PartMesh>();
 
-            var mainPart = new PartMesh()
+            PartMesh mainPart = new PartMesh()
             {
                 UV = originalMesh.uv,
                 Vertices = originalMesh.vertices,
@@ -41,14 +42,14 @@ namespace NaughtyDoggy.Interactive
 
             parts.Add(mainPart);
 
-            for (var c = 0; c < CutCascades; c++)
+            for (int c = 0; c < CutCascades; c++)
             {
-                for (var i = 0; i < parts.Count; i++)
+                for (int i = 0; i < parts.Count; i++)
                 {
-                    var bounds = parts[i].Bounds;
+                    Bounds bounds = parts[i].Bounds;
                     bounds.Expand(0.5f);
 
-                    var plane = new Plane(UnityEngine.Random.onUnitSphere, new Vector3(0, 0, 0));
+                    Plane plane = new Plane(UnityEngine.Random.onUnitSphere, new Vector3(0, 0, 0));
 
                     subParts.Add(GenerateMesh(parts[i], plane, true));
                     subParts.Add(GenerateMesh(parts[i], plane, false));
@@ -58,9 +59,14 @@ namespace NaughtyDoggy.Interactive
                 subParts.Clear();
             }
 
-            for (var i = 0; i < parts.Count; i++)
+            for (int i = 0; i < parts.Count; i++)
             {
-                parts[i].MakeGameObject(this);
+                if(MakeFadingObj)
+                    parts[i].MakeFadingGameObject(this);
+                else
+                    parts[i].MakeGameObject(this);
+                    
+                
                 parts[i].GameObject.GetComponent<Rigidbody>()
                     .AddForceAtPosition(parts[i].Bounds.center * ExplodeForce, transform.position);
             }
@@ -70,25 +76,25 @@ namespace NaughtyDoggy.Interactive
 
         private PartMesh GenerateMesh(PartMesh original, Plane plane, bool positiveSide)
         {
-            var partMesh = new PartMesh() { };
-            var ray1 = new Ray();
-            var ray2 = new Ray();
+            PartMesh partMesh = new PartMesh() { };
+            Ray ray1 = new Ray();
+            Ray ray2 = new Ray();
 
 
-            for (var i = 0; i < original.Triangles.Length; i++)
+            for (int i = 0; i < original.Triangles.Length; i++)
             {
-                var triangles = original.Triangles[i];
+                int[] triangles = original.Triangles[i];
                 edgeSet = false;
 
-                for (var j = 0; j < triangles.Length; j = j + 3)
+                for (int j = 0; j < triangles.Length; j = j + 3)
                 {
-                    var sideA = plane.GetSide(original.Vertices[triangles[j]]) == positiveSide;
-                    var sideB = plane.GetSide(original.Vertices[triangles[j + 1]]) == positiveSide;
-                    var sideC = plane.GetSide(original.Vertices[triangles[j + 2]]) == positiveSide;
+                    bool sideA = plane.GetSide(original.Vertices[triangles[j]]) == positiveSide;
+                    bool sideB = plane.GetSide(original.Vertices[triangles[j + 1]]) == positiveSide;
+                    bool sideC = plane.GetSide(original.Vertices[triangles[j + 2]]) == positiveSide;
 
-                    var sideCount = (sideA ? 1 : 0) +
-                                    (sideB ? 1 : 0) +
-                                    (sideC ? 1 : 0);
+                    int sideCount = (sideA ? 1 : 0) + (sideB ? 1 : 0) + (sideC ? 1 : 0);
+                    
+                    
                     if (sideCount == 0)
                     {
                         continue;
@@ -106,32 +112,33 @@ namespace NaughtyDoggy.Interactive
                     }
 
                     //cut points
-                    var singleIndex = sideB == sideC ? 0 : sideA == sideC ? 1 : 2;
+                    int singleIndex = sideB == sideC ? 0 : sideA == sideC ? 1 : 2;
 
                     ray1.origin = original.Vertices[triangles[j + singleIndex]];
-                    var dir1 = original.Vertices[triangles[j + ((singleIndex + 1) % 3)]] -
+                    Vector3 dir1 = original.Vertices[triangles[j + ((singleIndex + 1) % 3)]] -
                                original.Vertices[triangles[j + singleIndex]];
                     ray1.direction = dir1;
                     plane.Raycast(ray1, out var enter1);
-                    var lerp1 = enter1 / dir1.magnitude;
+                    float lerp1 = enter1 / dir1.magnitude;
 
                     ray2.origin = original.Vertices[triangles[j + singleIndex]];
-                    var dir2 = original.Vertices[triangles[j + ((singleIndex + 2) % 3)]] -
+                    Vector3 dir2 = original.Vertices[triangles[j + ((singleIndex + 2) % 3)]] -
                                original.Vertices[triangles[j + singleIndex]];
                     ray2.direction = dir2;
                     plane.Raycast(ray2, out var enter2);
-                    var lerp2 = enter2 / dir2.magnitude;
+                    float lerp2 = enter2 / dir2.magnitude;
 
                     //first vertex = ancor
-                    AddEdge(i,
-                        partMesh,
-                        positiveSide ? plane.normal * -1f : plane.normal,
-                        ray1.origin + ray1.direction.normalized * enter1,
-                        ray2.origin + ray2.direction.normalized * enter2,
-                        Vector2.Lerp(original.UV[triangles[j + singleIndex]],
-                            original.UV[triangles[j + ((singleIndex + 1) % 3)]], lerp1),
-                        Vector2.Lerp(original.UV[triangles[j + singleIndex]],
-                            original.UV[triangles[j + ((singleIndex + 2) % 3)]], lerp2));
+                    if(FillCrossSection)
+                        AddEdge(i,
+                            partMesh,
+                            positiveSide ? plane.normal * -1f : plane.normal,
+                            ray1.origin + ray1.direction.normalized * enter1,
+                            ray2.origin + ray2.direction.normalized * enter2,
+                            Vector2.Lerp(original.UV[triangles[j + singleIndex]],
+                                original.UV[triangles[j + ((singleIndex + 1) % 3)]], lerp1),
+                            Vector2.Lerp(original.UV[triangles[j + singleIndex]],
+                                original.UV[triangles[j + ((singleIndex + 2) % 3)]], lerp2));
 
                     if (sideCount == 1)
                     {
@@ -227,9 +234,7 @@ namespace NaughtyDoggy.Interactive
             public GameObject GameObject;
             public Bounds Bounds = new Bounds();
 
-            public PartMesh()
-            {
-            }
+            public PartMesh() { }
 
             public void AddTriangle(int submesh, Vector3 vert1, Vector3 vert2, Vector3 vert3, Vector3 normal1,
                 Vector3 normal2, Vector3 normal3, Vector2 uv1, Vector2 uv2, Vector2 uv3)
@@ -264,7 +269,7 @@ namespace NaughtyDoggy.Interactive
                 Normals = _Normals.ToArray();
                 UV = _UVs.ToArray();
                 Triangles = new int[_Triangles.Count][];
-                for (var i = 0; i < _Triangles.Count; i++)
+                for (int i = 0; i < _Triangles.Count; i++)
                     Triangles[i] = _Triangles[i].ToArray();
             }
 
@@ -275,27 +280,27 @@ namespace NaughtyDoggy.Interactive
                 GameObject.transform.rotation = original.transform.rotation;
                 GameObject.transform.localScale = original.transform.localScale;
 
-                var mesh = new Mesh();
+                Mesh mesh = new Mesh();
                 mesh.name = original.GetComponent<MeshFilter>().mesh.name;
 
                 mesh.vertices = Vertices;
                 mesh.normals = Normals;
                 mesh.uv = UV;
 
-                for (var i = 0; i < Triangles.Length; i++)
+                for (int i = 0; i < Triangles.Length; i++)
                     mesh.SetTriangles(Triangles[i], i, true);
                 Bounds = mesh.bounds;
 
-                var renderer = GameObject.AddComponent<MeshRenderer>();
+                MeshRenderer renderer = GameObject.AddComponent<MeshRenderer>();
                 renderer.materials = original.GetComponent<MeshRenderer>().materials;
 
-                var filter = GameObject.AddComponent<MeshFilter>();
+                MeshFilter filter = GameObject.AddComponent<MeshFilter>();
                 filter.mesh = mesh;
 
-                var collider = GameObject.AddComponent<MeshCollider>();
+                MeshCollider collider = GameObject.AddComponent<MeshCollider>();
                 collider.convex = true;
 
-                var rigidbody = GameObject.AddComponent<Rigidbody>();
+                Rigidbody rigidbody = GameObject.AddComponent<Rigidbody>();
             }
 
             public void MakeFadingGameObject(DestroyableItem original)

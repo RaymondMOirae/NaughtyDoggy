@@ -31,7 +31,7 @@ namespace NaughtyDoggy.Interactive
                 interactiveLayer);
 
             IEnumerable<Transform> filteredResult = from hit in hits
-                                                    where hit.CompareTag("InteractiveEntity")
+                                                    where hit.CompareTag("BtnBasedInteract")
                                                     orderby OffetAngleInXZDimention(transform.forward, hit.transform.position - transform.position)
                                                     select hit.transform;
             if (filteredResult.Any())

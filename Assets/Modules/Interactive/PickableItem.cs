@@ -9,9 +9,10 @@ public class PickableItem : InteractiveItemBase
 {
     [SerializeField] private GameObject _handle;
     [SerializeField] private GameObject _holder;
-    [SerializeField] private bool _beHeld = false;
     private Transform _dynamicObjParent;
     private Rigidbody _rigidbody;
+    
+    public bool BeHeld = false;
     protected override void Start()
     {
         base.Start();
@@ -37,9 +38,9 @@ public class PickableItem : InteractiveItemBase
             }
         }
 
-        if (!_beHeld)
+        if (!BeHeld)
         {
-            _beHeld = true;
+            BeHeld = true;
             transform.SetParent(_holder.transform, false);
             transform.localPosition =  - MathHelper.Vec3Mul(_handle.transform.localPosition, transform.localScale);
             transform.rotation = _holder.transform.rotation;
@@ -48,7 +49,7 @@ public class PickableItem : InteractiveItemBase
         }
         else
         {
-            _beHeld = false;
+            BeHeld = false;
             _rigidbody.useGravity = true;
             _rigidbody.isKinematic = false;
             transform.SetParent(_dynamicObjParent, true);

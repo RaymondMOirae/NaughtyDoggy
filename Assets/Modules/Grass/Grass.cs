@@ -2,37 +2,53 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using NaughtyDoggy.Interactive;
+using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class Grass : InteractiveItemBase
+public class Grass : MonoBehaviour
 {
-    private Mesh _originalMesh;
-    private MeshFilter _originalMeshFilter;
     private bool _isCut = false;
-    public Plane TestPlane;
+    private Plane _cutPlane;
+    [Range(0.02f, 0.3f)] [SerializeField]
+    private float CutHeight = 0.2f;
+    
+    private MeshFilter _originalMeshFilter;
+    private Mesh _originalMesh;
+    
+    private List<Vector3> _oldVertices;
+    private List<List<int>> _oldTriangles;
+    private List<Vector3> _oldNormals;
+    
+    private List<Vector3> _newVertices = new List<Vector3>();
+    private List<List<int>> _newTriangles = new List<List<int>>();
+    private List<Vector3> _newNormals = new List<Vector3>();
 
+    private Bounds _newBounds;
+    
+    private bool edgeSet;
+    private Vector3 edgeVert;
+    private Plane edgePlane;
 
     // Start is called before the first frame update
-    protected override void Start()
+    void Start()
     {
         _originalMeshFilter = GetComponent<MeshFilter>();
         _originalMesh = _originalMeshFilter.mesh;
-        TestPlane = new Plane(Vector3.up, new Vector3(0.0f, 0.2f, 0.0f));
+        _cutPlane = new Plane(Vector3.up, new Vector3(0.0f, CutHeight, 0.0f));
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Response()
     {
         if (!_isCut)
         {
-            GetCutMesh(TestPlane, false);
+            CutMesh(_cutPlane, false);
             _isCut = true;
         }
     }
 
-    private void GetCutMesh(Plane plane, bool downSide)
+    private void CutMesh(Plane plane, bool downSide)
     {
         _originalMesh = GetComponent<MeshFilter>().mesh;
         
@@ -52,18 +68,15 @@ public class Grass : InteractiveItemBase
 
         for (int i = 0; i < _oldTriangles.Count; i++)
         {
-            List<int> curSubmeshTriangles = _oldTriangles[i];
+            List<int> submeshTris = _oldTriangles[i];
             edgeSet = false;
 
-            for (int j = 0; j < curSubmeshTriangles.Count; j = j + 3)
+            for (int j = 0; j < submeshTris.Count; j = j + 3)
             {
                 // every 3 ints represents a triangle's vertices' indexes.
-                bool sideA = (plane.GetSide(_oldVertices[curSubmeshTriangles[j]]) == downSide);
-                bool sideB = (plane.GetSide(_oldVertices[curSubmeshTriangles[j + 1]]) == downSide);
-                bool sideC = (plane.GetSide(_oldVertices[curSubmeshTriangles[j + 2]]) == downSide);
-                // bool sideA = _oldVertices[curSubmeshTriangles[j]].y > 0.0f;
-                // bool sideB = _oldVertices[curSubmeshTriangles[j + 1]].y > 0.0f;
-                // bool sideC = _oldVertices[curSubmeshTriangles[j + 2]].y > 0.0f;
+                bool sideA = (plane.GetSide(_oldVertices[submeshTris[j]]) == downSide);
+                bool sideB = (plane.GetSide(_oldVertices[submeshTris[j + 1]]) == downSide);
+                bool sideC = (plane.GetSide(_oldVertices[submeshTris[j + 2]]) == downSide);
 
                 int sideCount = (sideA ? 1 : 0) + (sideB ? 1 : 0) + (sideC ? 1 : 0);
                 
@@ -79,9 +92,9 @@ public class Grass : InteractiveItemBase
                     continue;
                 }else if (sideCount == 3) // type2
                 {
-                    AddTriangle(i, _oldVertices[curSubmeshTriangles[j]], _oldVertices[curSubmeshTriangles[j + 1]],
-                                _oldVertices[curSubmeshTriangles[j + 2]], _oldNormals[curSubmeshTriangles[j]],
-                                _oldNormals[curSubmeshTriangles[j + 1]], _oldNormals[curSubmeshTriangles[j + 2]]);
+                    AddTriangle(i, _oldVertices[submeshTris[j]], _oldVertices[submeshTris[j + 1]],
+                                _oldVertices[submeshTris[j + 2]], _oldNormals[submeshTris[j]],
+                                _oldNormals[submeshTris[j + 1]], _oldNormals[submeshTris[j + 2]]);
                     continue;
                 }
                 
@@ -89,71 +102,55 @@ public class Grass : InteractiveItemBase
                 
                 int singleIndex = sideB == sideC ? 0 : sideA == sideC ? 1 : 2;
                 
-                ray1.origin = _oldVertices[curSubmeshTriangles[j + singleIndex]];
-                Vector3 dir1 = _oldVertices[curSubmeshTriangles[j + (singleIndex + 1) % 3]] -
-                               _oldVertices[curSubmeshTriangles[j + singleIndex]];
+                ray1.origin = _oldVertices[submeshTris[j + singleIndex]];
+                Vector3 dir1 = _oldVertices[submeshTris[j + (singleIndex + 1) % 3]] -
+                               _oldVertices[submeshTris[j + singleIndex]];
                 ray1.direction = dir1;
                 plane.Raycast(ray1, out float enter1);
                 float lerp1 = enter1 / dir1.magnitude;
 
-                ray2.origin = _oldVertices[curSubmeshTriangles[j + singleIndex]];
-                Vector3 dir2 = _oldVertices[curSubmeshTriangles[j + (singleIndex + 2) % 3]] - 
-                               _oldVertices[curSubmeshTriangles[j + singleIndex]];
+                ray2.origin = _oldVertices[submeshTris[j + singleIndex]];
+                Vector3 dir2 = _oldVertices[submeshTris[j + (singleIndex + 2) % 3]] - 
+                               _oldVertices[submeshTris[j + singleIndex]];
                 ray2.direction = dir2;
                 plane.Raycast(ray2, out float enter2);
                 float lerp2 = enter2 / dir2.magnitude;
                 
-                // AddEdge(i, downSide ? plane.normal * -1.0f : plane.normal,
-                //         ray1.origin + ray1.direction.normalized * enter1,
-                //         ray2.origin + ray2.direction.normalized * enter2
-                //         );
-                
                 if (sideCount == 1)
                 {
-                    AddTriangle(i, _oldVertices[curSubmeshTriangles[j + singleIndex]],
+                    AddTriangle(i, _oldVertices[submeshTris[j + singleIndex]],
                         ray1.origin + ray1.direction.normalized * enter1,
                         ray2.origin + ray2.direction.normalized * enter2,
-                        _oldNormals[curSubmeshTriangles[j + singleIndex]],
-                        Vector3.Lerp(_oldNormals[curSubmeshTriangles[j + singleIndex]],
-                            _oldNormals[curSubmeshTriangles[j + (singleIndex + 1) % 3]], lerp1),
-                        Vector3.Lerp(_oldNormals[curSubmeshTriangles[j + (singleIndex + 2) % 3]],
-                            _oldNormals[curSubmeshTriangles[j + (singleIndex + 2) % 3]], lerp2)
+                        _oldNormals[submeshTris[j + singleIndex]],
+                        Vector3.Lerp(_oldNormals[submeshTris[j + singleIndex]],
+                            _oldNormals[submeshTris[j + (singleIndex + 1) % 3]], lerp1),
+                        Vector3.Lerp(_oldNormals[submeshTris[j + (singleIndex + 2) % 3]],
+                            _oldNormals[submeshTris[j + (singleIndex + 2) % 3]], lerp2)
                     );
                 }else if (sideCount == 2)
                 {
                     AddTriangle(i, ray1.origin + ray1.direction.normalized * enter1,
-                        _oldVertices[curSubmeshTriangles[j + (singleIndex + 1) % 3]],
-                        _oldVertices[curSubmeshTriangles[j + (singleIndex + 2) % 3]],
-                        Vector3.Lerp(_oldNormals[curSubmeshTriangles[j + singleIndex]],
-                            _oldNormals[curSubmeshTriangles[j + (singleIndex + 1) % 3]], lerp1),
-                        _oldNormals[curSubmeshTriangles[j + (singleIndex + 1) % 3]],
-                        _oldNormals[curSubmeshTriangles[j + (singleIndex + 2) % 3]]);
+                        _oldVertices[submeshTris[j + (singleIndex + 1) % 3]],
+                        _oldVertices[submeshTris[j + (singleIndex + 2) % 3]],
+                        Vector3.Lerp(_oldNormals[submeshTris[j + singleIndex]],
+                            _oldNormals[submeshTris[j + (singleIndex + 1) % 3]], lerp1),
+                        _oldNormals[submeshTris[j + (singleIndex + 1) % 3]],
+                        _oldNormals[submeshTris[j + (singleIndex + 2) % 3]]);
                     AddTriangle(i, ray1.origin + ray1.direction.normalized * enter1,
-                        _oldVertices[curSubmeshTriangles[j + (singleIndex + 2) % 3]],
+                        _oldVertices[submeshTris[j + (singleIndex + 2) % 3]],
                         ray2.origin + ray2.direction.normalized * enter2,
-                        Vector3.Lerp(_oldNormals[curSubmeshTriangles[j + singleIndex]],
-                            _oldNormals[curSubmeshTriangles[j + (singleIndex + 1) % 3]], lerp1),
-                        _oldNormals[curSubmeshTriangles[j + (singleIndex + 2) % 3]],
-                        Vector3.Lerp(_oldNormals[curSubmeshTriangles[j + singleIndex]],
-                            _oldNormals[curSubmeshTriangles[j + (singleIndex + 2) % 3]], lerp2));
+                        Vector3.Lerp(_oldNormals[submeshTris[j + singleIndex]],
+                            _oldNormals[submeshTris[j + (singleIndex + 1) % 3]], lerp1),
+                        _oldNormals[submeshTris[j + (singleIndex + 2) % 3]],
+                        Vector3.Lerp(_oldNormals[submeshTris[j + singleIndex]],
+                            _oldNormals[submeshTris[j + (singleIndex + 2) % 3]], lerp2));
                 }
             }
         }
         SetNewMesh();
     }
 
-    private List<Vector3> _oldVertices;
-    private List<List<int>> _oldTriangles;
-    private List<Vector3> _oldNormals;
     
-    private List<Vector3> _newVertices = new List<Vector3>();
-    private List<List<int>> _newTriangles = new List<List<int>>();
-    private List<Vector3> _newNormals = new List<Vector3>();
-    private Bounds _newBounds = new Bounds();
-
-    private bool edgeSet;
-    private Vector3 edgeVert;
-    private Plane edgePlane = new Plane();
     private void AddTriangle(int submesh, Vector3 vert1, Vector3 vert2, Vector3 vert3,
                                           Vector3 norm1, Vector3 norm2, Vector3 norm3)
     {
@@ -202,7 +199,6 @@ public class Grass : InteractiveItemBase
         Mesh _newMesh = new Mesh();
         _newMesh.vertices = _newVertices.ToArray();
         
-        //_originalMesh.vertices = _newVertices.ToArray();
         for(int i = 0; i < _newTriangles.Count; i++)
         {
             _newMesh.SetTriangles(_newTriangles[i], i, true);
