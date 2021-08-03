@@ -41,38 +41,33 @@ namespace NaughtyDoggy.Fluid
 
         [SerializeField] private Vector4 boundaryMax;
         [SerializeField] private Vector4 boundaryMin;
-
-        [SerializeField] private Bounds instancingBounds;
-        [SerializeField] private Mesh particleMesh;
-        [SerializeField] private Material particleMat;
-
+        
         private ParticleData[] _particleData;
-        private ParticleData[] _wallParticleData;
-        private readonly uint[] _instancingArgs = new uint[5] {0, 0, 0, 0, 0};
-        private ComputeBuffer _instancingArgsBuffer;
 
         private ComputeBuffer _particleBufferREAD;
         private ComputeBuffer _particleBufferWRITE;
-        private ComputeBuffer _wallParticleBuffer;
 
         private int _predictPositionKernel;
         private int _calculateLambdaKernel;
         private int _calculateDeltaPosKernel;
         private int _updatePositionKernel;
+        private int _pbfBufferSwapKernel;
+        
         [SerializeField] private ComputeShader pbfSimulationCS;
+
+        public ComputeBuffer PartilceBuffer => _particleBufferREAD;
+        public int ParticleNum => particleNum;
 
         void Start()
         {
             SpawnFluidParticles();
             InitSimulatorComputeBuffer();
-            InitInstancingBuffer();
         }
 
         private void Update()
         {
             SetSimulatorValues();
             ComputeParticleBuffer();
-            DrawParticle();
         }
 
         private void InitSimulatorComputeBuffer()
@@ -81,7 +76,7 @@ namespace NaughtyDoggy.Fluid
             _calculateLambdaKernel = pbfSimulationCS.FindKernel("CalculateLambda");
             _calculateDeltaPosKernel = pbfSimulationCS.FindKernel("CalculateDeltaPos");
             _updatePositionKernel = pbfSimulationCS.FindKernel("UpdatePosition");
-            _pbfBufferSwapPass = pbfSimulationCS.FindKernel("BufferSwap");
+            _pbfBufferSwapKernel = pbfSimulationCS.FindKernel("BufferSwap");
             _particleBufferREAD = new ComputeBuffer(particleNum, ParticleDataSize, ComputeBufferType.Default);
             _particleBufferWRITE = new ComputeBuffer(particleNum, ParticleDataSize, ComputeBufferType.Default);
             _particleBufferREAD.SetData(_particleData);
@@ -112,29 +107,12 @@ namespace NaughtyDoggy.Fluid
             pbfSimulationCS.SetVector("BoundaryMin", boundaryMin);
         }
 
-        private void InitInstancingBuffer()
-        {
-            if (particleMesh != null)
-            {
-                _instancingArgs[0] = particleMesh.GetIndexCount(0);
-                _instancingArgs[1] = (uint) particleNum;
-                _instancingArgs[2] = particleMesh.GetIndexStart(0);
-                _instancingArgs[3] = particleMesh.GetBaseVertex(0);
-            }
 
-            _instancingArgsBuffer = new ComputeBuffer(1, _instancingArgs.Length * sizeof(uint),
-                ComputeBufferType.IndirectArguments);
-            _instancingArgsBuffer.SetData(_instancingArgs);
-
-            particleMat.SetBuffer("ParticleBuffer", _particleBufferREAD);
-            particleMat.enableInstancing = true;
-        }
-
-        private int _pbfBufferSwapPass;
+        
 
         private void ComputeParticleBuffer()
         {
-            DispatchKernel(_pbfBufferSwapPass);
+            DispatchKernel(_pbfBufferSwapKernel);
             DispatchKernel(_predictPositionKernel);
 
             for (int i = 0; i < solverIteration; i++)
@@ -165,19 +143,12 @@ namespace NaughtyDoggy.Fluid
             bufferWRITE = temp;
         }
 
-        private void DrawParticle()
-        {
-            particleMat.SetBuffer("ParticleBuffer", _particleBufferREAD);
-            Graphics.DrawMeshInstancedIndirect(particleMesh, 0, particleMat, instancingBounds,
-                _instancingArgsBuffer);
-            
-        }
+        
 
         private void SpawnFluidParticles()
         {
             Vector3 boundarySpace = (boundaryMax - boundaryMin) * 0.9f;
             _particleData = new ParticleData[particleNum];
-            instancingBounds = new Bounds(transform.position, Vector3.one * 200.0f);
             for (int i = 0; i < particleNum; i++)
             {
                 Vector3 pos = (Vector3) boundaryMin +
@@ -199,18 +170,14 @@ namespace NaughtyDoggy.Fluid
 
         private void OnDisable()
         {
-            _instancingArgsBuffer.Release();
             _particleBufferREAD.Release();
             _particleBufferWRITE.Release();
-            _wallParticleBuffer.Release();
         }
 
         private void OnDestroy()
         {
-            _instancingArgsBuffer.Release();
             _particleBufferREAD.Release();
             _particleBufferWRITE.Release();
-            _wallParticleBuffer.Release();
         }
     }
 
