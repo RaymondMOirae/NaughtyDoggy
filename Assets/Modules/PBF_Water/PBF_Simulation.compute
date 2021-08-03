@@ -19,11 +19,9 @@ struct ParticleData
 
 RWStructuredBuffer<ParticleData> ParticleBufferREAD;
 RWStructuredBuffer<ParticleData> ParticleBufferWRITE;
-// RWStructuredBuffer<ParticleData> WallParticleBuffer;
 
 float RestDensity;
 int ParticleNum;
-// int WallParticleNum;
 float4 Gravity;
 float DeltaTime;
 float ParticleMass;
@@ -54,7 +52,6 @@ float SquaredEuclideanDistance(float3 posA, float3 posB);
 float Poly6Kernel(float3 posP, float3 posNeighbor);
 float3 SpikyKernel(float3 posP, float3 posNeighbor);
 
-// todo: do something about LOOPS
 [numthreads(32,1,1)]
 void PredictPosition(uint3 id : SV_DispatchThreadID)
 {
@@ -66,7 +63,6 @@ void PredictPosition(uint3 id : SV_DispatchThreadID)
     ParticleBufferWRITE[id.x].extForce = Gravity.xyz;
     ParticleBufferWRITE[id.x].velocity = ParticleBufferREAD[id.x].velocity + ParticleBufferWRITE[id.x].extForce * DeltaTime;
     ParticleBufferWRITE[id.x].nextPosition = ParticleBufferWRITE[id.x].curPosition + ParticleBufferWRITE[id.x].velocity * DeltaTime;
-    // ParticleBufferWRITE[id.x].nextPosition = CheckBoundaries(ParticleBufferWRITE[id.x].nextPosition);
 }
 
 [numthreads(32,1,1)]
@@ -90,15 +86,6 @@ void CalculateLambda(uint3 id : SV_DispatchThreadID)
         }
     }
     
-    // for(int i = 0; i < WallParticleNum; i++)
-    // {
-    //     float3 neighborPosition = WallParticleBuffer[i].nextPosition;
-    //     if(length(curPosition - neighborPosition) < NeighborRadius)
-    //     {
-    //         density += ParticleMass * Poly6Kernel(curPosition, neighborPosition);
-    //     }
-    // }
-    
     float equationOfStateTerm = (density / RestDensity) - 1.0f;
 
     float3 gradientVectorSum;
@@ -114,17 +101,6 @@ void CalculateLambda(uint3 id : SV_DispatchThreadID)
             gradientMagnitudeSum += pow(gradient, 2.0f);
         }
     }
-
-    // for(int k = 0; k < WallParticleNum; k++)
-    // {
-    //     float3 neighborPosition = WallParticleBuffer[k].nextPosition;
-    //     if(length(curPosition - neighborPosition) < NeighborRadius)
-    //     {
-    //         float3 gradient = SpikyKernel(curPosition, neighborPosition) / RestDensity;
-    //         gradientVectorSum += gradient;
-    //         gradientMagnitudeSum += pow(gradient, 2.0f);
-    //     }
-    // }
     
     gradientMagnitudeSum += SquaredEuclideanDistance(gradientVectorSum, float3(0, 0, 0));
     ParticleBufferWRITE[id.x].lambda = -1.0f * equationOfStateTerm / (gradientMagnitudeSum + EpsilonLambda);
@@ -154,21 +130,6 @@ void CalculateDeltaPos(uint id : SV_DispatchThreadID)
             deltaPosition += correctedGradient;
         }
     }
-    
-    // for(int i = 0; i < WallParticleNum; i++)
-    // {
-    //     float3 neighborPosition = WallParticleBuffer[i].nextPosition;
-    //     if(length(curPosition - neighborPosition) < NeighborRadius)
-    //     {
-    //         // calculate S_correction by PBF equation(13)
-    //         float sCorrection = Poly6Kernel(curPosition, neighborPosition) / WDeltaQ;
-    //         sCorrection = -1.0f * pow(abs(sCorrection), N) * K;
-    //         float lambdaCorrectionTerm = ParticleBufferWRITE[id.x].lambda + WallParticleBuffer[i].lambda + sCorrection;
-    //         float3 gradient = SpikyKernel(curPosition, neighborPosition);
-    //         float3 correctedGradient = gradient * lambdaCorrectionTerm;
-    //         deltaPosition += correctedGradient;
-    //     }
-    // }
     
     ParticleBufferWRITE[id.x].deltaPosition = deltaPosition / RestDensity;
 
@@ -206,18 +167,6 @@ void UpdatePosition(uint3 id : SV_DispatchThreadID)
             viscosity += addedGradienVel;
         }
     }
-    
-    // for(int i = 0; i < WallParticleNum; i++)
-    // {
-    //     float3 neighborPosition = WallParticleBuffer[i].nextPosition;
-    //     if(length(nextPosition - neighborPosition) < NeighborRadius)
-    //     {
-    //         // XSPH cescosity
-    //         float3 relaticeVelocity = nextVelocity - ParticleBufferWRITE[i].velocity;
-    //         float3 addedGradienVel = relaticeVelocity * Poly6Kernel(nextPosition, neighborPosition);
-    //         viscosity += addedGradienVel;
-    //     }
-    // }
     
     ParticleBufferWRITE[id.x].velocity += viscosity * C;
     ParticleBufferWRITE[id.x].curPosition = nextPosition;

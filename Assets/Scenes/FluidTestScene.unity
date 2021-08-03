@@ -522,6 +522,7 @@ GameObject:
   - component: {fileID: 534669904}
   - component: {fileID: 534669903}
   - component: {fileID: 534669906}
+  - component: {fileID: 534669907}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -588,7 +589,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 534669902}
   m_LocalRotation: {x: -0.049329303, y: 0.9502348, z: -0.23177034, w: -0.20224515}
-  m_LocalPosition: {x: 6.34, y: 9.226107, z: 18.79}
+  m_LocalPosition: {x: 18.2, y: 41.8, z: 60.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 913603025}
@@ -602,13 +603,25 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 534669902}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a814280454adadd4c8799d8f145db90b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _player: {fileID: 4020983981217893279}
   _offset: {x: 0, y: 0, z: 0}
+--- !u!114 &534669907
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 534669902}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a4b8a630af8ec844ae6f815f1c065f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &638664084
 GameObject:
   m_ObjectHideFlags: 0
@@ -1845,19 +1858,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e09ee6457e5f66945a5f53bf2698c498, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  solverIteration: 2
+  solverIteration: 3
   restDensity: 1
-  particleNum: 6400
-  wallParticleNum: 0
+  particleNum: 12800
   gravity: {x: 0, y: -9, z: 0, w: 0}
   particleMass: 1
   interactRadius: 2
   neighborRadius: 4
   k: 0.01
-  n: 4
+  n: 2
   epsilonLambda: 7
   c: 0.001
-  boundaryMax: {x: 5, y: 20, z: 5, w: 0}
+  boundaryMax: {x: 5, y: 50, z: 5, w: 0}
   boundaryMin: {x: -25, y: 0, z: -25, w: 0}
   instancingBounds:
     m_Center: {x: 0, y: 0, z: 0}
