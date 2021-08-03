@@ -146,8 +146,8 @@ public class PBF_Solver : MonoBehaviour
         
         DispatchKernel(_updatePositionKernel);
 
-        // only u
-        _particleBufferWRITE.GetData(_particleData);
+        // only used for debug
+        // _particleBufferWRITE.GetData(_particleData);
 
         SwapBuffer(ref _particleBufferREAD, ref _particleBufferWRITE);
     }
@@ -179,12 +179,12 @@ public class PBF_Solver : MonoBehaviour
 
     private void SpawnFluidParticles()
     {
-        Vector3 boundarySpace = boundaryMax - boundaryMin;
+        Vector3 boundarySpace = (boundaryMax - boundaryMin) * 0.9f;
         _particleData = new ParticleData[particleNum];
         instancingBounds = new Bounds(transform.position, Vector3.one * 200.0f);
         for (int i = 0; i < particleNum; i++)
         {
-            Vector3 pos =  (Vector3) boundaryMin +
+            Vector3 pos =  (Vector3) boundaryMin + 
                            MathHelper.Vec3Mul(MathHelper.Vec3Random(), boundarySpace);
             NewParticle(ref _particleData[i], pos);
         }
@@ -194,8 +194,8 @@ public class PBF_Solver : MonoBehaviour
     private void SpawnWalls()
     {
         Vector3 boundarySpace = boundaryMax - boundaryMin;
-        float wallSpawnPadding = interactRadius * 2.0f;
-        Vector3 boundaryNum = boundarySpace / wallSpawnPadding;
+        float wallSpawnPadding = interactRadius / 4.0f;
+        Vector3 boundaryNum = boundarySpace / wallSpawnPadding + Vector3.one;
         wallParticleNum = (int) (boundaryNum.x * boundaryNum.y * 2 + boundaryNum.x * boundaryNum.z * 2 +
                                  boundaryNum.y * boundaryNum.z * 2);
         
@@ -219,8 +219,8 @@ public class PBF_Solver : MonoBehaviour
             {
                 Vector3 posBut = new Vector3(i * wallSpawnPadding, 0.0f, j * wallSpawnPadding) + (Vector3) boundaryMin;
                 NewParticle(ref _wallParticleData[_spawnedNum++], posBut);
-                // Vector3 posTop = new Vector3(i * wallSpawnPadding, boundarySpace.y, j * wallSpawnPadding) + (Vector3) boundaryMin;
-                // NewParticle(ref _wallParticleData[_spawnedNum++], posTop);
+                Vector3 posTop = new Vector3(i * wallSpawnPadding, boundarySpace.y, j * wallSpawnPadding) + (Vector3) boundaryMin;
+                NewParticle(ref _wallParticleData[_spawnedNum++], posTop);
             }
         }
 
@@ -234,7 +234,6 @@ public class PBF_Solver : MonoBehaviour
                 NewParticle(ref _wallParticleData[_spawnedNum++], posTop);
             }
         }
-        
     }
 
     private void NewParticle(ref ParticleData particle, Vector3 pos)

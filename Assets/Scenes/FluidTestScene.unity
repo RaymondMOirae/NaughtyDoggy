@@ -1845,23 +1845,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e09ee6457e5f66945a5f53bf2698c498, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  solverIteration: 1
-  restDensity: 3
-  particleNum: 12800
+  solverIteration: 2
+  restDensity: 1
+  particleNum: 6400
   wallParticleNum: 0
   gravity: {x: 0, y: -9, z: 0, w: 0}
   particleMass: 1
-  interactRadius: 1
-  neighborRadius: 2
-  k: 0.0001
-  n: 2
-  epsilonLambda: 60
+  interactRadius: 2
+  neighborRadius: 4
+  k: 0.01
+  n: 4
+  epsilonLambda: 7
   c: 0.001
-  boundaryMax: {x: 10, y: 25, z: 5, w: 0}
+  boundaryMax: {x: 5, y: 20, z: 5, w: 0}
   boundaryMin: {x: -25, y: 0, z: -25, w: 0}
   instancingBounds:
     m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 100, y: 100, z: 100}
   particleMesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
   particleMat: {fileID: 2100000, guid: 9b6c7a7cb73ec3745b5c7c990d475710, type: 2}
   pbfSimulationCS: {fileID: 7200000, guid: f4bff0149df3d58459284d7103a2dbfa, type: 3}
