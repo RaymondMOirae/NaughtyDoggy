@@ -7,35 +7,36 @@ using UnityEngine.Rendering;
 
 namespace NaughtyDoggy.Fluid
 {
-    public class PBF_ParticleDepthRenderer : MonoBehaviour
+    public class PBF_FluidRenderer : MonoBehaviour
     {
-        public Shader ParticleDepthShader;
-        public Material ParticleDepthMat;
-        public Camera DepthCamera;
-        public int FluidLayer;
-        public PBF_Solver Solver;
-        
         private readonly uint[] _instancingArgs = new uint[5] {0, 0, 0, 0, 0};
         private ComputeBuffer _instancingArgsBuffer;
         private Bounds instancingBounds;
-        public float InstancingBoundSize;
+        public float InstancingBoundSize; 
+        
+        private Camera DepthCamera;
+        [SerializeField] private int FluidLayer;
+        [SerializeField] private PBF_Solver Solver;
+
+        [SerializeField] private Material particleDepthMat;
+        [SerializeField] private Material particleShadingMat;
         
         [SerializeField] private Mesh particleMesh;
-        [SerializeField] private Material particleMat;
-        [SerializeField] private RenderTexture ParticleTexture;
 
         // Start is called before the first frame update
         void Start()
         {
             // DepthCamera.enabled = false;
             // DepthCamera.cullingMask = 1 << FluidLayer;
+            DepthCamera = GetComponent<Camera>();
+            
             DepthCamera.clearFlags = CameraClearFlags.Color;
             
-            if (ParticleDepthShader != null)
-            {
-                // Shader.SetGlobalBuffer("ParticleBuffer", Solver.PartilceBuffer);
-                // DepthCamera.SetReplacementShader(ParticleDepthShader, "Opaque");
-            }
+            // if (particleDepthShader != null)
+            // {
+            // Shader.SetGlobalBuffer("ParticleBuffer", Solver.PartilceBuffer);
+            // DepthCamera.SetReplacementShader(ParticleDepthShader, "Opaque");
+            // }
             
             InitInstancingBuffer();
         }
@@ -45,11 +46,25 @@ namespace NaughtyDoggy.Fluid
         {
             DrawParticle();
         }
-        
+
+        private void OnRenderImage(RenderTexture src, RenderTexture dest)
+        {
+            RenderTexture _temp = RenderTexture.GetTemporary(src.width, src.height, 24);
+            // particleShadingMat.SetTexture("_MainTex", src);
+            Graphics.Blit(src, _temp, particleShadingMat, 0);
+            Graphics.Blit(_temp, dest);
+            //Graphics.Blit(src, dest);
+        }
+
+        private void OnPreRender()
+        {
+            // DrawParticle();
+        }
+
         private void DrawParticle()
         {
-            particleMat.SetBuffer("ParticleBuffer", Solver.PartilceBuffer);
-            Graphics.DrawMeshInstancedIndirect(particleMesh, 0, particleMat, instancingBounds,
+            particleDepthMat.SetBuffer("ParticleBuffer", Solver.PartilceBuffer);
+            Graphics.DrawMeshInstancedIndirect(particleMesh, 0, particleDepthMat, instancingBounds,
                 _instancingArgsBuffer, 0, null, ShadowCastingMode.Off, false, FluidLayer, DepthCamera);
         }
         
@@ -67,16 +82,9 @@ namespace NaughtyDoggy.Fluid
                 ComputeBufferType.IndirectArguments);
             _instancingArgsBuffer.SetData(_instancingArgs);
             instancingBounds = new Bounds(Solver.transform.position, Vector3.one * InstancingBoundSize);
-            particleMat.SetBuffer("ParticleBuffer", Solver.PartilceBuffer);
-            particleMat.enableInstancing = true;
+            particleDepthMat.SetBuffer("ParticleBuffer", Solver.PartilceBuffer);
+            particleDepthMat.enableInstancing = true;
         }
-
-        private void OnPreRender()
-        {
-            
-        }
-
-        
 
         private void OnDisable()
         {

@@ -381,7 +381,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &436036907
 Transform:
   m_ObjectHideFlags: 0
@@ -623,15 +623,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a4b8a630af8ec844ae6f815f1c065f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ParticleDepthShader: {fileID: 4800000, guid: 7ee8cd4e37fcafd49b77ce5467bc22e2, type: 3}
-  ParticleDepthMat: {fileID: 0}
-  DepthCamera: {fileID: 534669904}
+  InstancingBoundSize: 100
   FluidLayer: 8
   Solver: {fileID: 2080573143}
-  InstancingBoundSize: 100
+  particleDepthMat: {fileID: 2100000, guid: 9b6c7a7cb73ec3745b5c7c990d475710, type: 2}
+  particleShadingMat: {fileID: 2100000, guid: d6b5df75054379c4dab87caf8b5d89dd, type: 2}
   particleMesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
-  particleMat: {fileID: 2100000, guid: 9b6c7a7cb73ec3745b5c7c990d475710, type: 2}
-  ParticleTexture: {fileID: 0}
 --- !u!20 &534669904
 Camera:
   m_ObjectHideFlags: 0
@@ -1904,7 +1901,7 @@ MonoBehaviour:
   neighborRadius: 4
   k: 0.01
   n: 2
-  epsilonLambda: 7
+  epsilonLambda: 20
   c: 0.001
   boundaryMax: {x: 5, y: 50, z: 5, w: 0}
   boundaryMin: {x: -25, y: 0, z: -25, w: 0}
