@@ -29,7 +29,7 @@ namespace NaughtyDoggy.Fluid
         {
             // DepthCamera.enabled = false;
             // DepthCamera.cullingMask = 1 << FluidLayer;
-            DepthCamera.clearFlags = CameraClearFlags.Depth;
+            DepthCamera.clearFlags = CameraClearFlags.Color;
             
             if (ParticleDepthShader != null)
             {
@@ -50,7 +50,7 @@ namespace NaughtyDoggy.Fluid
         {
             particleMat.SetBuffer("ParticleBuffer", Solver.PartilceBuffer);
             Graphics.DrawMeshInstancedIndirect(particleMesh, 0, particleMat, instancingBounds,
-                _instancingArgsBuffer, 0, null, ShadowCastingMode.On, true, FluidLayer, DepthCamera);
+                _instancingArgsBuffer, 0, null, ShadowCastingMode.Off, false, FluidLayer, DepthCamera);
         }
         
         private void InitInstancingBuffer()

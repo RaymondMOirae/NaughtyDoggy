@@ -47,6 +47,7 @@ Shader "Unlit/PBF_ParticleDepth"
 
             struct v2f
             {
+				float zDepth : TEXCOORD0;
                 float4 vertex : SV_POSITION;
             };
 
@@ -56,17 +57,27 @@ Shader "Unlit/PBF_ParticleDepth"
             v2f vert (appdata v, uint id : SV_INSTANCEID)
             {
                 v2f o;
+            	
 				#if SHADER_TARGET >=45
 					v.vertex = mul(TMatrixToWorldPos(ParticleBuffer[id.x].curPosition), v.vertex);
 				#endif
+
                 o.vertex = UnityObjectToClipPos(v.vertex);
+            	
+				o.zDepth = o.vertex.z / o.vertex.w;
+            	
                 return o;
             }
             
             fixed4 frag (v2f i) : SV_Target
             {
-                return fixed4(i.vertex.z, i.vertex.z, i.vertex.z, 1);
-                // return fixed4(1.0 , 1.0, 1.0, 1);
+            	float zDepth = i.zDepth;
+            	#if !defined(UNITY_REVERSED_Z)
+					zDepth = zDepth * 0.5 + 0.5;
+            	#endif
+				
+                // return fixed4(i.vertex.z, i.vertex.z, i.vertex.z, 1);
+                return fixed4(zDepth, zDepth, zDepth, 1);
             }
             ENDCG
         }
