@@ -60,7 +60,7 @@ namespace NaughtyDoggy.Fluid
 
         private void OnRenderImage(RenderTexture src, RenderTexture dest)
         {
-            RenderTexture _blurResult = RenderTexture.GetTemporary(src.width, src.height, 24);
+            RenderTexture _blurResult = RenderTexture.GetTemporary(src.width, src.height, 24, RenderTextureFormat.ARGBFloat);
             particleShadingMat.SetTexture("_MainTex", src);
             particleShadingMat.SetFloat("BlurRange", BlurRange);
             particleShadingMat.SetFloat("BlurScale", BlurScale);
@@ -71,14 +71,14 @@ namespace NaughtyDoggy.Fluid
 
             for (int i = 0; i < IterationPassNum; i++)
             {
-                RenderTexture temp = RenderTexture.GetTemporary(src.width, src.height, 24);
+                RenderTexture temp = RenderTexture.GetTemporary(src.width, src.height, 24, RenderTextureFormat.ARGBFloat);
                 
                 Graphics.Blit(_blurResult, temp, particleShadingMat, _horizontalPass);
                 
                 RenderTexture.ReleaseTemporary(_blurResult);
                 _blurResult = temp;
-
-                temp = RenderTexture.GetTemporary(src.width, src.height, 24);
+            
+                temp = RenderTexture.GetTemporary(src.width, src.height, 24, RenderTextureFormat.ARGBFloat);
                 
                 Graphics.Blit(_blurResult, temp, particleShadingMat, _verticalPass);
                 RenderTexture.ReleaseTemporary(_blurResult);
@@ -86,7 +86,8 @@ namespace NaughtyDoggy.Fluid
             }
             
             
-            Graphics.Blit(_blurResult, dest);
+            Graphics.Blit(_blurResult, dest, particleShadingMat, 3);
+            // Graphics.Blit(_blurResult, dest);
             RenderTexture.ReleaseTemporary(_blurResult);
             //Graphics.Blit(src, dest);
         }

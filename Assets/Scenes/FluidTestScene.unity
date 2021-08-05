@@ -630,9 +630,9 @@ MonoBehaviour:
   particleShadingMat: {fileID: 2100000, guid: d6b5df75054379c4dab87caf8b5d89dd, type: 2}
   particleMesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
   ParticleScale: 1.2
-  BlurRange: 3
+  BlurRange: 8
   BlurScale: 0.016
-  BlurDepthFallOff: 45
+  BlurDepthFallOff: 27
   IterationPassNum: 3
 --- !u!20 &534669904
 Camera:
@@ -657,7 +657,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 50
+  near clip plane: 57
   far clip plane: 100
   field of view: 19
   orthographic: 0
@@ -1899,7 +1899,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   solverIteration: 3
   restDensity: 1
-  particleNum: 12800
+  particleNum: 6400
   gravity: {x: 0, y: -9, z: 0, w: 0}
   particleMass: 1
   interactRadius: 2
