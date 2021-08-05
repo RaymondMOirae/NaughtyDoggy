@@ -629,6 +629,11 @@ MonoBehaviour:
   particleDepthMat: {fileID: 2100000, guid: 9b6c7a7cb73ec3745b5c7c990d475710, type: 2}
   particleShadingMat: {fileID: 2100000, guid: d6b5df75054379c4dab87caf8b5d89dd, type: 2}
   particleMesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+  ParticleScale: 1.2
+  BlurRange: 3
+  BlurScale: 0.016
+  BlurDepthFallOff: 45
+  IterationPassNum: 3
 --- !u!20 &534669904
 Camera:
   m_ObjectHideFlags: 0
@@ -639,7 +644,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.23529412, g: 0.25490198, b: 0.23529412, a: 0}
+  m_BackGroundColor: {r: 0.15850836, g: 0.24528301, b: 0.15850836, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0

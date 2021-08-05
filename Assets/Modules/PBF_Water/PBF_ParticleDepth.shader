@@ -17,6 +17,11 @@ Shader "Unlit/PBF_ParticleDepth"
             #pragma target 4.5
             #include "UnityCG.cginc"
 
+            sampler2D _MainTex;
+            float4 _MainTex_ST;
+            
+            float ParticleScale;
+
 			#if SHADER_TARGET >=45
 
 				struct ParticleData
@@ -33,9 +38,9 @@ Shader "Unlit/PBF_ParticleDepth"
 
 				float4x4 TMatrixToWorldPos(float3 worldPos)
 				{
-					return float4x4(1, 0, 0, worldPos.x,
-								   0, 1, 0, worldPos.y,
-								   0, 0, 1, worldPos.z,
+					return float4x4(ParticleScale, 0, 0, worldPos.x,
+								   0, ParticleScale, 0, worldPos.y,
+								   0, 0, ParticleScale, worldPos.z,
 								   0, 0, 0, 1);
 				}
 			#endif
@@ -51,9 +56,6 @@ Shader "Unlit/PBF_ParticleDepth"
                 float4 vertex : SV_POSITION;
             };
 
-            sampler2D _MainTex;
-            float4 _MainTex_ST;
-            
             v2f vert (appdata v, uint id : SV_INSTANCEID)
             {
                 v2f o;
