@@ -189,7 +189,7 @@ Shader "Unlit/PBF_FluidShading"
 				
                 float3 color = ambient + specular + lerp(diffuse, reflection, saturate(fresnel));
 				
-				return float4(color, 1);
+				return float4(color, curPixel.r);
 			}
 			
 

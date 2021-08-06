@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8496145896621861416
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8496145896621861414}
+  - component: {fileID: 8496145896621861417}
+  m_Layer: 8
+  m_Name: FluidContainer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8496145896621861414
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8496145896621861416}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.1, y: 0, z: 2}
+  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8496145896621861417
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8496145896621861416}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e09ee6457e5f66945a5f53bf2698c498, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  solverIteration: 3
+  restDensity: 1
+  particleNum: 2496
+  gravity: {x: 0, y: -9, z: 0, w: 0}
+  particleMass: 1
+  interactRadius: 2
+  neighborRadius: 4
+  k: 0.01
+  n: 2
+  epsilonLambda: 20
+  c: 0.001
+  boundaryMax: {x: 5, y: 50, z: 5, w: 0}
+  boundaryMin: {x: -10, y: 0, z: -10, w: 0}
+  pbfSimulationCS: {fileID: 7200000, guid: f4bff0149df3d58459284d7103a2dbfa, type: 3}

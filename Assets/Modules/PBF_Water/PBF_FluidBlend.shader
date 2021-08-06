@@ -20,6 +20,8 @@ Shader "Unlit/PBF_FluidBlend"
 
             sampler2D _MainTex;
             float4 _MainTex_ST;
+            sampler2D _CameraDepthTexture;
+            float4 _CameraDepth_ST;
             sampler2D _FluidTex;
             float4 _FluidTex_ST;
             float _FluidBlendWeight;
@@ -37,13 +39,15 @@ Shader "Unlit/PBF_FluidBlend"
                 // sample the texture
                 float4 _fluidColor = tex2D(_FluidTex, i.uv).rgba;
                 float4 _backColor = tex2D(_MainTex, i.uv);
+                float curPixelDepth = tex2D(_CameraDepthTexture, i.uv);
                 
-                if(_fluidColor.w == 0)
+                if(_fluidColor.w == 0 || curPixelDepth > _fluidColor.w)
                 {
                     return _backColor;
                 }
             
                 float3 color = _fluidColor * _FluidBlendWeight + _backColor * (1 - _FluidBlendWeight);
+                //return float4(curPixelDepth, 1, 1, 1);
                 return float4(color, 1);
             }
 
