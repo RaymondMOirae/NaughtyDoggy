@@ -71,14 +71,14 @@ Shader "Unlit/PBF_ParticleBatching"
             v2f vert (appdata v, uint id : SV_INSTANCEID)
             {
                 v2f o;
-            	
+
 				#if SHADER_TARGET >=45
 					v.vertex = mul(TMatrixToWorldPos(ParticleBuffer[id.x].curPosition), v.vertex);
             		v.vertex = mul(ScaleToParent(ParentPos, ParentScale), v.vertex);
 				#endif
 
-                o.vertex = UnityObjectToClipPos(v.vertex);
-            	
+            	o.vertex = UnityWorldToClipPos(v.vertex);
+				
 				o.zDepth = o.vertex.z / o.vertex.w;
             	
                 return o;

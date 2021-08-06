@@ -300,6 +300,8 @@ namespace NaughtyDoggy.Interactive
                 MeshCollider collider = GameObject.AddComponent<MeshCollider>();
                 collider.convex = true;
 
+                // DestroyableItem destroy = GameObject.AddComponent<DestroyableItem>();
+
                 Rigidbody rigidbody = GameObject.AddComponent<Rigidbody>();
             }
 
