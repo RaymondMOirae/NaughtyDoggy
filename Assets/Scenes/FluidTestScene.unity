@@ -170,6 +170,7 @@ GameObject:
   - component: {fileID: 100838293}
   - component: {fileID: 100838292}
   - component: {fileID: 100838291}
+  - component: {fileID: 100838290}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -177,6 +178,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &100838290
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 100838289}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ea85c93fe0062645be59891a7577b68, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shadingRenderer: {fileID: 0}
+  blendShadingMat: {fileID: 2100000, guid: fb4ea2e1781b0c64495c1b642200ab3c, type: 2}
+  fluidBlendWeight: 0.772
 --- !u!81 &100838291
 AudioListener:
   m_ObjectHideFlags: 0
@@ -195,7 +211,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.23529412, g: 0.25490198, b: 0.23529412, a: 0}
+  m_BackGroundColor: {r: 0.7686275, g: 0.7686275, b: 0.7686275, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -624,8 +640,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a4b8a630af8ec844ae6f815f1c065f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FluidNormalTexture: {fileID: 0}
-  ScreenPixelSize: {x: 0, y: 0}
+  ScreenPixelSize: {x: 1008, y: 567}
+  fluidSpecularColor: {r: 1, g: 0.9970912, b: 0.8254717, a: 1}
+  fluidDiffuseColor: {r: 0.3638915, g: 0.47274914, b: 0.695, a: 1}
+  reflectionColor: {r: 0.4738341, g: 0.64343315, b: 0.8301887, a: 1}
+  gloss: 256
+  relectance: 0.706
   iterationPassNum: 3
   particleScale: 1.505
   blurScale: 0.003

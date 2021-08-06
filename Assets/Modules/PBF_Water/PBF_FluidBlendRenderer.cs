@@ -7,19 +7,23 @@ namespace NaughtyDoggy.Fluid
 {
     public class PBF_FluidBlendRenderer : MonoBehaviour
     {
-        [SerializeField] private PBF_FluidNormalRenderer normalRenderer;
-        
+        [SerializeField] private PBF_FluidShadingRenderer shadingRenderer;
         [SerializeField] private Material blendShadingMat;
+        [Range(0.0f, 1.0f)]
+        [SerializeField] private float fluidBlendWeight;
 
         // Start is called before the first frame update
         void Start()
         {
-            normalRenderer = GetComponentInChildren<PBF_FluidNormalRenderer>();
+            shadingRenderer = GetComponentInChildren<PBF_FluidShadingRenderer>();
         }
 
         private void OnRenderImage(RenderTexture src, RenderTexture dest)
         {
-            
+            blendShadingMat.SetTexture("_FluidTex", shadingRenderer.FluidTexture);
+            blendShadingMat.SetFloat("_FluidBlendWeight", fluidBlendWeight);
+
+            Graphics.Blit(src, dest, blendShadingMat, 0);
         }
 
         // Update is called once per frame

@@ -8,9 +8,12 @@ using UnityEngine.Rendering;
 
 namespace NaughtyDoggy.Fluid
 {
-    public class PBF_FluidNormalRenderer : MonoBehaviour
+    public class PBF_FluidShadingRenderer : MonoBehaviour
     {
-        public RenderTexture FluidNormalTexture;
+        private RenderTexture _fluidTexture;
+        private RenderTexture _camRenderTarget;
+        public RenderTexture FluidTexture => _camRenderTarget;
+        
         [HideInInspector] public Vector2Int ScreenPixelSize;
         
         private int _verticalFilterPassIndex = 1;
@@ -22,6 +25,13 @@ namespace NaughtyDoggy.Fluid
         private Bounds _instancingBounds;
         
         private Camera _depthCamera;
+
+        [SerializeField] private Color fluidSpecularColor;
+        [SerializeField] private Color fluidDiffuseColor;
+        [SerializeField] private Color reflectionColor;
+        [SerializeField] private float gloss;
+        [Range(0, 1)]
+        [SerializeField] private float relectance;
         
         [SerializeField] private int iterationPassNum;
         [Range(1.0f, 2.0f)] 
@@ -48,8 +58,13 @@ namespace NaughtyDoggy.Fluid
             _depthCamera.clearFlags = CameraClearFlags.Color;
             
             ScreenPixelSize = new Vector2Int(_depthCamera.pixelWidth, _depthCamera.pixelHeight);
-            FluidNormalTexture = RenderTexture.GetTemporary(ScreenPixelSize.x, ScreenPixelSize.y, 24,
+            
+            _camRenderTarget = RenderTexture.GetTemporary(ScreenPixelSize.x, ScreenPixelSize.y, 24,
                                                                           RenderTextureFormat.ARGBFloat);
+            
+            _fluidTexture = RenderTexture.GetTemporary(ScreenPixelSize.x, ScreenPixelSize.y, 24,
+                                                                          RenderTextureFormat.ARGBFloat);
+            _depthCamera.targetTexture = _camRenderTarget;
             InitInstancingBuffer();
         }
         
@@ -59,32 +74,38 @@ namespace NaughtyDoggy.Fluid
             DrawParticle();
         }
 
-        private void OnRenderImage(RenderTexture src, RenderTexture dest)
+        private void OnPostRender()
         {
-            particleShadingMat.SetTexture("_MainTex", src);
+            particleShadingMat.SetTexture("_MainTex", _camRenderTarget);
             particleShadingMat.SetFloat("BlurRange", blurRange);
             particleShadingMat.SetFloat("BlurScale", blurScale);
             particleShadingMat.SetFloat("BlurDepthFallOff", blurDepthFallOff);
-            
-            Graphics.Blit(src, FluidNormalTexture);
+            particleShadingMat.SetVector("_SpecularColor", fluidSpecularColor);
+            particleShadingMat.SetVector("_ReflectionColor", reflectionColor);
+            particleShadingMat.SetVector("_DiffuseColor", fluidDiffuseColor);
+            particleShadingMat.SetFloat("_Gloss", gloss);
+            particleShadingMat.SetFloat("_Reflectance", relectance);
+
+            Graphics.Blit(_camRenderTarget, _fluidTexture);
+
             
             for (int i = 0; i < iterationPassNum; i++)
             {
-                RenderTexture temp = RenderTexture.GetTemporary(src.width, src.height, 24, RenderTextureFormat.ARGBFloat);
+                RenderTexture temp = RenderTexture.GetTemporary(ScreenPixelSize.x, ScreenPixelSize.y, 24, RenderTextureFormat.ARGBFloat);
                 
-                Graphics.Blit(FluidNormalTexture, temp, particleShadingMat, _horizontalFilterPassIndex);
+                Graphics.Blit(_fluidTexture, temp, particleShadingMat, _horizontalFilterPassIndex);
                 
-                RenderTexture.ReleaseTemporary(FluidNormalTexture);
-                FluidNormalTexture = temp;
+                RenderTexture.ReleaseTemporary(_fluidTexture);
+                _fluidTexture = temp;
             
-                temp = RenderTexture.GetTemporary(src.width, src.height, 24, RenderTextureFormat.ARGBFloat);
+                temp = RenderTexture.GetTemporary(ScreenPixelSize.x, ScreenPixelSize.y, 24, RenderTextureFormat.ARGBFloat);
                 
-                Graphics.Blit(FluidNormalTexture, temp, particleShadingMat, _verticalFilterPassIndex);
-                RenderTexture.ReleaseTemporary(FluidNormalTexture);
-                FluidNormalTexture = temp;
+                Graphics.Blit(_fluidTexture, temp, particleShadingMat, _verticalFilterPassIndex);
+                RenderTexture.ReleaseTemporary(_fluidTexture);
+                _fluidTexture = temp;
             }
             
-            Graphics.Blit(FluidNormalTexture, dest, particleShadingMat,_normalReconstructPassIndex);
+            Graphics.Blit(_fluidTexture, _camRenderTarget, particleShadingMat,_normalReconstructPassIndex);
         }
 
         private void DrawParticle()
@@ -118,13 +139,15 @@ namespace NaughtyDoggy.Fluid
         private void OnDisable()
         {
             _instancingArgsBuffer.Release();
-            FluidNormalTexture.Release();
+            _fluidTexture.Release();
+            _camRenderTarget.Release();
         }
 
         private void OnDestroy()
         {
             _instancingArgsBuffer.Release();
-            FluidNormalTexture.Release();
+            _fluidTexture.Release();
+            _camRenderTarget.Release();
         }
     }
 

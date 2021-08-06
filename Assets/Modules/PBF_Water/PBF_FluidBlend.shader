@@ -10,6 +10,7 @@ Shader "Unlit/PBF_FluidBlend"
         LOD 100
         CGINCLUDE
             #include "UnityCG.cginc"
+            #include "AutoLight.cginc"
 
             struct v2f
             {
@@ -19,20 +20,31 @@ Shader "Unlit/PBF_FluidBlend"
 
             sampler2D _MainTex;
             float4 _MainTex_ST;
+            sampler2D _FluidTex;
+            float4 _FluidTex_ST;
+            float _FluidBlendWeight;
 
-            v2f vert (appdata_img v)
+            v2f PassThroughVert (appdata_img v)
             {
                 v2f o;
                 o.vertex = UnityObjectToClipPos(v.vertex);
-                o.uv = TRANSFORM_TEX(v.texcoord, _MainTex);
+                o.uv = v.texcoord;
                 return o;
             }
 
-            fixed4 frag (v2f i) : SV_Target
+            float4 BlendShadingFrag (v2f i) : SV_Target
             {
                 // sample the texture
-                fixed4 col = tex2D(_MainTex, i.uv);
-                return col;
+                float4 _fluidColor = tex2D(_FluidTex, i.uv).rgba;
+                float4 _backColor = tex2D(_MainTex, i.uv);
+                
+                if(_fluidColor.w == 0)
+                {
+                    return _backColor;
+                }
+            
+                float3 color = _fluidColor * _FluidBlendWeight + _backColor * (1 - _FluidBlendWeight);
+                return float4(color, 1);
             }
 
         ENDCG
@@ -40,8 +52,8 @@ Shader "Unlit/PBF_FluidBlend"
         Pass
         {
             CGPROGRAM
-                #pragma vertex vert
-                #pragma fragment frag
+                #pragma vertex PassThroughVert
+                #pragma fragment BlendShadingFrag
                     
             ENDCG
         }
