@@ -18,6 +18,7 @@ namespace NaughtyDoggy.Fluid
         private Camera DepthCamera;
         [SerializeField] private int FluidLayer;
         [SerializeField] private PBF_Solver Solver;
+        [SerializeField] private GameObject ParticleContainer;
 
         [SerializeField] private Material particleDepthMat;
         [SerializeField] private Material particleShadingMat;
@@ -92,15 +93,12 @@ namespace NaughtyDoggy.Fluid
             //Graphics.Blit(src, dest);
         }
 
-        private void OnPreRender()
-        {
-            // DrawParticle();
-        }
-
         private void DrawParticle()
         {
             particleDepthMat.SetFloat("ParticleScale", ParticleScale);
             particleDepthMat.SetBuffer("ParticleBuffer", Solver.PartilceBuffer);
+            particleDepthMat.SetVector("ParentPos", ParticleContainer.transform.position);
+            particleDepthMat.SetVector("ParentScale", ParticleContainer.transform.lossyScale);
             Graphics.DrawMeshInstancedIndirect(particleMesh, 0, particleDepthMat, instancingBounds,
                 _instancingArgsBuffer, 0, null, ShadowCastingMode.Off, false, FluidLayer, DepthCamera);
         }

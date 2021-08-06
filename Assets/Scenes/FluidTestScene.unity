@@ -208,8 +208,8 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.1
-  far clip plane: 5000
+  near clip plane: 10
+  far clip plane: 50
   field of view: 19
   orthographic: 0
   orthographic size: 5
@@ -236,7 +236,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 100838289}
   m_LocalRotation: {x: -0.049329303, y: 0.9502348, z: -0.23177034, w: -0.20224515}
-  m_LocalPosition: {x: 18.2, y: 41.8, z: 60.6}
+  m_LocalPosition: {x: 6.34, y: 9.226107, z: 18.79}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -626,6 +626,7 @@ MonoBehaviour:
   InstancingBoundSize: 100
   FluidLayer: 8
   Solver: {fileID: 2080573143}
+  ParticleContainer: {fileID: 2080573142}
   particleDepthMat: {fileID: 2100000, guid: 9b6c7a7cb73ec3745b5c7c990d475710, type: 2}
   particleShadingMat: {fileID: 2100000, guid: d6b5df75054379c4dab87caf8b5d89dd, type: 2}
   particleMesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
@@ -657,8 +658,8 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 57
-  far clip plane: 100
+  near clip plane: 15
+  far clip plane: 30
   field of view: 19
   orthographic: 0
   orthographic size: 5
@@ -685,7 +686,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 534669902}
   m_LocalRotation: {x: -0.049329303, y: 0.9502348, z: -0.23177034, w: -0.20224515}
-  m_LocalPosition: {x: 18.2, y: 41.8, z: 60.6}
+  m_LocalPosition: {x: 6.34, y: 9.226107, z: 18.79}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

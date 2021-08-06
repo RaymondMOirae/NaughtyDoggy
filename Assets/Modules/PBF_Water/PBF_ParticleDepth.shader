@@ -21,6 +21,9 @@ Shader "Unlit/PBF_ParticleDepth"
             float4 _MainTex_ST;
             
             float ParticleScale;
+            float3 ParentPos;
+            float3 ParentScale;
+			// float4x4 LocalToWorldMatrix;
 
 			#if SHADER_TARGET >=45
 
@@ -35,6 +38,7 @@ Shader "Unlit/PBF_ParticleDepth"
 				};
 
 				StructuredBuffer<ParticleData> ParticleBuffer;
+				
 
 				float4x4 TMatrixToWorldPos(float3 worldPos)
 				{
@@ -42,6 +46,14 @@ Shader "Unlit/PBF_ParticleDepth"
 								   0, ParticleScale, 0, worldPos.y,
 								   0, 0, ParticleScale, worldPos.z,
 								   0, 0, 0, 1);
+				}
+
+				float4x4 ScaleToParent(float3 parentPos, float3 parentScale)
+				{
+					return float4x4(parentScale.x, 0, 0, parentPos.x,
+									0, parentScale.y, 0, parentPos.y,
+									0, 0, parentScale.z, parentPos.z,
+									0, 0, 0 ,1);
 				}
 			#endif
             
@@ -62,6 +74,7 @@ Shader "Unlit/PBF_ParticleDepth"
             	
 				#if SHADER_TARGET >=45
 					v.vertex = mul(TMatrixToWorldPos(ParticleBuffer[id.x].curPosition), v.vertex);
+            		v.vertex = mul(ScaleToParent(ParentPos, ParentScale), v.vertex);
 				#endif
 
                 o.vertex = UnityObjectToClipPos(v.vertex);
