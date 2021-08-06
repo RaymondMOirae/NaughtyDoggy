@@ -1,4 +1,4 @@
-Shader "Unlit/PBF_ParticleDepth"
+Shader "Unlit/PBF_ParticleBatching"
 {
     Properties
     {

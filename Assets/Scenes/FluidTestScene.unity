@@ -157,7 +157,7 @@ Transform:
   - {fileID: 1170450187}
   - {fileID: 1239476612}
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &100838289
 GameObject:
@@ -238,7 +238,8 @@ Transform:
   m_LocalRotation: {x: -0.049329303, y: 0.9502348, z: -0.23177034, w: -0.20224515}
   m_LocalPosition: {x: 6.34, y: 9.226107, z: 18.79}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 534669905}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 23.3, y: -134.05, z: 0}
@@ -400,7 +401,7 @@ Transform:
   - {fileID: 4003899140210953}
   - {fileID: 1849914964}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &437636953
 GameObject:
@@ -623,18 +624,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a4b8a630af8ec844ae6f815f1c065f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  InstancingBoundSize: 100
-  FluidLayer: 8
-  Solver: {fileID: 2080573143}
-  ParticleContainer: {fileID: 2080573142}
+  FluidNormalTexture: {fileID: 0}
+  ScreenPixelSize: {x: 0, y: 0}
+  iterationPassNum: 3
+  particleScale: 1.505
+  blurScale: 0.003
+  blurRange: 7
+  blurDepthFallOff: 33
+  fluidLayer: 8
+  instancingBoundSize: 100
+  fluidSolver: {fileID: 2080573143}
+  particleContainer: {fileID: 2080573142}
   particleDepthMat: {fileID: 2100000, guid: 9b6c7a7cb73ec3745b5c7c990d475710, type: 2}
   particleShadingMat: {fileID: 2100000, guid: d6b5df75054379c4dab87caf8b5d89dd, type: 2}
   particleMesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
-  ParticleScale: 1.2
-  BlurRange: 8
-  BlurScale: 0.016
-  BlurDepthFallOff: 27
-  IterationPassNum: 3
 --- !u!20 &534669904
 Camera:
   m_ObjectHideFlags: 0
@@ -659,7 +662,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 15
-  far clip plane: 30
+  far clip plane: 80
   field of view: 19
   orthographic: 0
   orthographic size: 5
@@ -685,12 +688,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 534669902}
-  m_LocalRotation: {x: -0.049329303, y: 0.9502348, z: -0.23177034, w: -0.20224515}
-  m_LocalPosition: {x: 6.34, y: 9.226107, z: 18.79}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_Father: {fileID: 100838293}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 23.3, y: -134.05, z: 0}
 --- !u!1 &638664084
 GameObject:
@@ -879,7 +882,7 @@ Transform:
   - {fileID: 900007670}
   - {fileID: 1220604634}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &900007668
 GameObject:
@@ -1900,7 +1903,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   solverIteration: 3
   restDensity: 1
-  particleNum: 6400
+  particleNum: 2496
   gravity: {x: 0, y: -9, z: 0, w: 0}
   particleMass: 1
   interactRadius: 2
@@ -1910,7 +1913,7 @@ MonoBehaviour:
   epsilonLambda: 20
   c: 0.001
   boundaryMax: {x: 5, y: 50, z: 5, w: 0}
-  boundaryMin: {x: -25, y: 0, z: -25, w: 0}
+  boundaryMin: {x: -10, y: 0, z: -10, w: 0}
   pbfSimulationCS: {fileID: 7200000, guid: f4bff0149df3d58459284d7103a2dbfa, type: 3}
 --- !u!4 &2080573144
 Transform:
@@ -1920,11 +1923,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2080573142}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0.1, y: 0, z: 2}
+  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2123071781
 GameObject:
@@ -1958,7 +1961,7 @@ Transform:
   - {fileID: 4093639707438706}
   - {fileID: 4423895159674161}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2131039250
 GameObject:
@@ -4504,7 +4507,7 @@ Transform:
   - {fileID: 30173171899507544}
   - {fileID: 966815411}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &4385080171985075819
 MeshFilter:
