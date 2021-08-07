@@ -4755,15 +4755,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5666091253480185953, guid: 4e298ce0ac194ef41b31990ee75766fc, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 6.34
+      value: 10.31
       objectReference: {fileID: 0}
     - target: {fileID: 5666091253480185953, guid: 4e298ce0ac194ef41b31990ee75766fc, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 9.226107
+      value: 17.16
       objectReference: {fileID: 0}
     - target: {fileID: 5666091253480185953, guid: 4e298ce0ac194ef41b31990ee75766fc, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 18.79
+      value: 27.69
       objectReference: {fileID: 0}
     - target: {fileID: 5666091253480185953, guid: 4e298ce0ac194ef41b31990ee75766fc, type: 3}
       propertyPath: m_LocalRotation.w
@@ -5375,16 +5375,28 @@ PrefabInstance:
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 8496145896621861414, guid: 86797cc70df8aac44b7f334617ff8a73, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.085432
+      objectReference: {fileID: 0}
+    - target: {fileID: 8496145896621861414, guid: 86797cc70df8aac44b7f334617ff8a73, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.085432
+      objectReference: {fileID: 0}
+    - target: {fileID: 8496145896621861414, guid: 86797cc70df8aac44b7f334617ff8a73, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.085432
+      objectReference: {fileID: 0}
+    - target: {fileID: 8496145896621861414, guid: 86797cc70df8aac44b7f334617ff8a73, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.2
+      value: -0.45
       objectReference: {fileID: 0}
     - target: {fileID: 8496145896621861414, guid: 86797cc70df8aac44b7f334617ff8a73, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.3
+      value: -0.43
       objectReference: {fileID: 0}
     - target: {fileID: 8496145896621861414, guid: 86797cc70df8aac44b7f334617ff8a73, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.5
+      value: 3.25
       objectReference: {fileID: 0}
     - target: {fileID: 8496145896621861414, guid: 86797cc70df8aac44b7f334617ff8a73, type: 3}
       propertyPath: m_LocalRotation.w
@@ -5417,6 +5429,34 @@ PrefabInstance:
     - target: {fileID: 8496145896621861416, guid: 86797cc70df8aac44b7f334617ff8a73, type: 3}
       propertyPath: m_Name
       value: FluidContainer
+      objectReference: {fileID: 0}
+    - target: {fileID: 8496145896621861417, guid: 86797cc70df8aac44b7f334617ff8a73, type: 3}
+      propertyPath: particleNum
+      value: 6400
+      objectReference: {fileID: 0}
+    - target: {fileID: 8496145896621861417, guid: 86797cc70df8aac44b7f334617ff8a73, type: 3}
+      propertyPath: restDensity
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8496145896621861417, guid: 86797cc70df8aac44b7f334617ff8a73, type: 3}
+      propertyPath: BoundaryMax.x
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 8496145896621861417, guid: 86797cc70df8aac44b7f334617ff8a73, type: 3}
+      propertyPath: BoundaryMax.y
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 8496145896621861417, guid: 86797cc70df8aac44b7f334617ff8a73, type: 3}
+      propertyPath: BoundaryMax.z
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 8496145896621861417, guid: 86797cc70df8aac44b7f334617ff8a73, type: 3}
+      propertyPath: BoundaryMin.x
+      value: -5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8496145896621861417, guid: 86797cc70df8aac44b7f334617ff8a73, type: 3}
+      propertyPath: BoundaryMin.z
+      value: -5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 86797cc70df8aac44b7f334617ff8a73, type: 3}
