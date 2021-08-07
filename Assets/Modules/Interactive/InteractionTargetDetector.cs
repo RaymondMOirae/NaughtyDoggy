@@ -47,8 +47,12 @@ namespace NaughtyDoggy.Interactive
             }
             else
             {
-                if(_target)
+                if (_target)
+                {
                     _target.SendMessage("DeactivateSign", SendMessageOptions.RequireReceiver);
+                    _target = null;
+                }
+                    
             }
         }
 

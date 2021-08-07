@@ -39,8 +39,8 @@ namespace NaughtyDoggy.Fluid
         private float DeltaQ => 0.2f * interactRadius;
         private float WDeltaQ => Poly6Term * Mathf.Pow(interactRadius * interactRadius - DeltaQ * DeltaQ, 3.0f);
 
-        [SerializeField] private Vector4 boundaryMax;
-        [SerializeField] private Vector4 boundaryMin;
+        public Vector4 BoundaryMax;
+        public Vector4 BoundaryMin;
         
         private ParticleData[] _particleData;
 
@@ -103,8 +103,8 @@ namespace NaughtyDoggy.Fluid
             pbfSimulationCS.SetFloat("SpikyTerm", SpikyTerm);
             pbfSimulationCS.SetFloat("WDeltaQ", WDeltaQ);
             pbfSimulationCS.SetVector("Gravity", gravity);
-            pbfSimulationCS.SetVector("BoundaryMax", boundaryMax);
-            pbfSimulationCS.SetVector("BoundaryMin", boundaryMin);
+            pbfSimulationCS.SetVector("BoundaryMax", BoundaryMax);
+            pbfSimulationCS.SetVector("BoundaryMin", BoundaryMin);
         }
 
 
@@ -147,11 +147,11 @@ namespace NaughtyDoggy.Fluid
 
         private void SpawnFluidParticles()
         {
-            Vector3 boundarySpace = (boundaryMax - boundaryMin) * 0.9f;
+            Vector3 boundarySpace = (BoundaryMax - BoundaryMin) * 0.9f;
             _particleData = new ParticleData[particleNum];
             for (int i = 0; i < particleNum; i++)
             {
-                Vector3 pos = (Vector3) boundaryMin +
+                Vector3 pos = (Vector3) BoundaryMin +
                               MathHelper.Vec3Mul(MathHelper.Vec3Random(), boundarySpace);
                 NewParticle(ref _particleData[i], pos);
             }

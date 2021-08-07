@@ -23,7 +23,7 @@ public class Rake : MonoBehaviour
     {
         if (other.collider.CompareTag("CollisionBasedInteract") && _rakeBody.BeHeld)
         {
-            other.gameObject.BroadcastMessage("Response");
+            other.gameObject.BroadcastMessage("Response", SendMessageOptions.DontRequireReceiver);
         }
         
     }

@@ -15,6 +15,7 @@ namespace NaughtyDoggy.Interactive
         public float ExplodeForce = 250.0f;
         public bool FillCrossSection;
         public bool MakeFadingObj;
+        public bool DestroyableRepeatedly;
 
         private void Response()
         {
@@ -279,6 +280,8 @@ namespace NaughtyDoggy.Interactive
                 GameObject.transform.position = original.transform.position;
                 GameObject.transform.rotation = original.transform.rotation;
                 GameObject.transform.localScale = original.transform.localScale;
+                GameObject.tag = original.tag;
+                GameObject.layer = original.gameObject.layer;
 
                 Mesh mesh = new Mesh();
                 mesh.name = original.GetComponent<MeshFilter>().mesh.name;
@@ -300,9 +303,18 @@ namespace NaughtyDoggy.Interactive
                 MeshCollider collider = GameObject.AddComponent<MeshCollider>();
                 collider.convex = true;
 
-                // DestroyableItem destroy = GameObject.AddComponent<DestroyableItem>();
-
+                if (original.DestroyableRepeatedly)
+                {
+                    DestroyableItem destroy = GameObject.AddComponent<DestroyableItem>();
+                    destroy.CutCascades = original.CutCascades - 1;
+                    destroy.FillCrossSection = original.FillCrossSection;
+                    destroy.MakeFadingObj = true;
+                    destroy.DestroyableRepeatedly = false;
+                }
+                
                 Rigidbody rigidbody = GameObject.AddComponent<Rigidbody>();
+
+                
             }
 
             public void MakeFadingGameObject(DestroyableItem original)
