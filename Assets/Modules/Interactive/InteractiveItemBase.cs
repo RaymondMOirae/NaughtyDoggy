@@ -11,13 +11,13 @@ namespace NaughtyDoggy.Interactive
             _interactiveSign = transform.Find("Sign").gameObject;
         }
 
-        private void DeactivateSign()
+        protected void DeactivateSign()
         {
             //Debug.Log("Deactivate");
             _interactiveSign.SetActive(false);
         }
         
-        private void ActivateSign()
+        protected virtual void ActivateSign()
         {
             //Debug.Log("Avtivate");
             _interactiveSign.SetActive(true);

@@ -13,6 +13,7 @@ public class PickableItem : InteractiveItemBase
     private Rigidbody _rigidbody;
     
     public bool BeHeld = false;
+    
     protected override void Start()
     {
         base.Start();
@@ -46,6 +47,7 @@ public class PickableItem : InteractiveItemBase
             transform.rotation = _holder.transform.rotation;
             _rigidbody.useGravity = false;
             _rigidbody.isKinematic = true;
+            DeactivateSign();
         }
         else
         {
@@ -55,5 +57,13 @@ public class PickableItem : InteractiveItemBase
             transform.SetParent(_dynamicObjParent, true);
         }
             
+    }
+
+    protected override void ActivateSign()
+    {
+        if (!BeHeld)
+        {
+            base.ActivateSign();
+        }
     }
 }

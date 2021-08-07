@@ -22,10 +22,10 @@ namespace NaughtyDoggy.Interactive
 
         private void FixedUpdate()
         {
-            EnableTargetSign();
+            DetectTargetSign();
         }
 
-        private void EnableTargetSign()
+        private void DetectTargetSign()
         {
             Collider[] hits = Physics.OverlapBox(_detector.transform.position + _detector.center, _detector.size / 2, transform.rotation,
                 interactiveLayer);
