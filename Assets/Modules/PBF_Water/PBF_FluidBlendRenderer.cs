@@ -13,6 +13,7 @@ namespace NaughtyDoggy.Fluid
         [SerializeField] private float fluidBlendWeight;
 
         private Camera _blendCam;
+        private PBF_FluidShadingRenderer _shadingRenderer;
 
         // Start is called before the first frame update
         void Start()
@@ -21,10 +22,12 @@ namespace NaughtyDoggy.Fluid
             shadingRenderer = GetComponentInChildren<PBF_FluidShadingRenderer>();
             _blendCam = Camera.main;
             _blendCam.depthTextureMode = DepthTextureMode.Depth;
+            _shadingRenderer = GetComponentInChildren<PBF_FluidShadingRenderer>();
         }
 
         private void OnRenderImage(RenderTexture src, RenderTexture dest)
         {
+            _shadingRenderer.DrawParticle();
             blendShadingMat.SetTexture("_FluidTex", shadingRenderer.FluidTexture);
             blendShadingMat.SetFloat("_FluidBlendWeight", fluidBlendWeight);
 

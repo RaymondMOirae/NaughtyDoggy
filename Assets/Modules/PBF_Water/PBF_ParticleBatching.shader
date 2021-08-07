@@ -78,6 +78,7 @@ Shader "Unlit/PBF_ParticleBatching"
 				#endif
 
             	o.vertex = UnityWorldToClipPos(v.vertex);
+            	// o.vertex = UnityObjectToClipPos(v.vertex);
 				
 				o.zDepth = o.vertex.z / o.vertex.w;
             	

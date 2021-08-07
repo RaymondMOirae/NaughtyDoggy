@@ -37,8 +37,9 @@ Shader "Unlit/PBF_FluidBlend"
             float4 BlendShadingFrag (v2f i) : SV_Target
             {
                 // sample the texture
-                float4 _fluidColor = tex2D(_FluidTex, i.uv).rgba;
+
                 float4 _backColor = tex2D(_MainTex, i.uv);
+                float4 _fluidColor = tex2D(_FluidTex, i.uv).rgba;
                 float curPixelDepth = tex2D(_CameraDepthTexture, i.uv);
                 
                 if(_fluidColor.w == 0 || curPixelDepth > _fluidColor.w)

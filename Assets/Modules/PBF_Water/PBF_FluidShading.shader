@@ -19,7 +19,7 @@ Shader "Unlit/PBF_FluidShading"
 			half4 _MainTex_TexelSize;
     		samplerCUBE _Cubemap;
 			
-			float BlurRange;
+			int BlurRange;
 			float BlurScale;
 			float BlurDepthFallOff;
     	
@@ -124,7 +124,8 @@ Shader "Unlit/PBF_FluidShading"
 			float3 DepthToViewPos(float curPixel, float2 uv)
 			{
 				uv *= _MainTex_TexelSize.xy;
-				float3 clip_Vec = float3(uv * 2 - 1 , 1.0) * _ProjectionParams.z;
+				
+				float3 clip_Vec = float3(uv * 2.0 - 1.0, 1.0) * _ProjectionParams.z;
 				float3 view_Vec = mul(unity_CameraInvProjection, clip_Vec.xyzz).xyz;
 				float3 view_Pos = view_Vec * Linear01Depth(curPixel);
 				

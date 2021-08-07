@@ -1,8 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.Build.Content;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -38,7 +33,7 @@ namespace NaughtyDoggy.Fluid
         [SerializeField] private float particleScale;
         [Range(0.0f, 0.5f)] 
         [SerializeField] private float blurScale;
-        [SerializeField] private float blurRange;
+        [SerializeField] private int blurRange;
         [SerializeField] private float blurDepthFallOff;
         
         [SerializeField] private int fluidLayer;
@@ -57,7 +52,7 @@ namespace NaughtyDoggy.Fluid
             _depthCamera = GetComponent<Camera>(); 
             _depthCamera.clearFlags = CameraClearFlags.Color;
             
-            ScreenPixelSize = new Vector2Int(_depthCamera.pixelWidth, _depthCamera.pixelHeight);
+            ScreenPixelSize = new Vector2Int(Screen.width, Screen.height);
             
             _camRenderTarget = RenderTexture.GetTemporary(ScreenPixelSize.x, ScreenPixelSize.y, 24,
                                                                           RenderTextureFormat.ARGBFloat);
@@ -71,13 +66,23 @@ namespace NaughtyDoggy.Fluid
         // Update is called once per frame
         void Update()
         {
+            var currentScreen = new Vector2Int(Screen.width, Screen.height);
+            if (currentScreen != ScreenPixelSize)
+            {
+                ScreenPixelSize = new Vector2Int(Screen.width, Screen.height);
+                _camRenderTarget = RenderTexture.GetTemporary(ScreenPixelSize.x, ScreenPixelSize.y, 24,
+                                                                              RenderTextureFormat.ARGBFloat);
+                _fluidTexture = RenderTexture.GetTemporary(ScreenPixelSize.x, ScreenPixelSize.y, 24,
+                                                                              RenderTextureFormat.ARGBFloat);
+                _depthCamera.targetTexture = _camRenderTarget;
+            }
             DrawParticle();
         }
 
         private void OnPostRender()
         {
             particleShadingMat.SetTexture("_MainTex", _camRenderTarget);
-            particleShadingMat.SetFloat("BlurRange", blurRange);
+            particleShadingMat.SetInt("BlurRange", blurRange);
             particleShadingMat.SetFloat("BlurScale", blurScale);
             particleShadingMat.SetFloat("BlurDepthFallOff", blurDepthFallOff);
             particleShadingMat.SetVector("_SpecularColor", fluidSpecularColor);
@@ -108,7 +113,7 @@ namespace NaughtyDoggy.Fluid
             Graphics.Blit(_fluidTexture, _camRenderTarget, particleShadingMat,_normalReconstructPassIndex);
         }
 
-        private void DrawParticle()
+        public void DrawParticle()
         {
             particleDepthMat.SetFloat("ParticleScale", particleScale);
             particleDepthMat.SetBuffer("ParticleBuffer", fluidSolver.PartilceBuffer);

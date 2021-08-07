@@ -33,7 +33,7 @@ namespace NaughtyDoggy.PlayerControls
                     ""type"": ""Button"",
                     ""id"": ""8f2d6766-dcb7-4d4b-bc3a-d1f6f93e1f35"",
                     ""expectedControlType"": ""Button"",
-                    ""processors"": ""StickDeadzone"",
+                    ""processors"": """",
                     ""interactions"": """"
                 }
             ],
@@ -108,6 +108,17 @@ namespace NaughtyDoggy.PlayerControls
                     ""name"": """",
                     ""id"": ""ef0bcf7e-506c-405d-821a-1475957c462b"",
                     ""path"": ""<XInputController>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c4006605-5de6-49aa-8dd7-62fba4552bd1"",
+                    ""path"": ""<Keyboard>/j"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
