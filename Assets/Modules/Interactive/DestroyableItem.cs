@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-using NaughtyDoggy.PlayerControls;
+using NaughtyDoggy.UI;
 
 namespace NaughtyDoggy.Interactive
 {
@@ -16,10 +16,15 @@ namespace NaughtyDoggy.Interactive
         public bool FillCrossSection;
         public bool MakeFadingObj;
         public bool DestroyableRepeatedly;
+        public float Score = 200;
 
         private void Response()
         {
             DestroyMesh();
+            if (Score > 0)
+            {
+                GameManager.Instance.TriggerScoreStaging(Score);
+            }
         }
 
         public void DestroyMesh()
@@ -310,6 +315,7 @@ namespace NaughtyDoggy.Interactive
                     destroy.FillCrossSection = original.FillCrossSection;
                     destroy.MakeFadingObj = true;
                     destroy.DestroyableRepeatedly = false;
+                    destroy.Score = 0;
                 }
                 
                 Rigidbody rigidbody = GameObject.AddComponent<Rigidbody>();

@@ -1,5 +1,4 @@
-
-
+using NaughtyDoggy.Helper;
 
 namespace NaughtyDoggy.PlayerControls
 {

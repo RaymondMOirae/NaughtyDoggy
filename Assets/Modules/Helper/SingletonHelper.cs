@@ -3,19 +3,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SingletonHelper<T> : MonoBehaviour where T : SingletonHelper<T>
+namespace NaughtyDoggy.Helper
 {
-    private static T _instance = null;
-    protected static T Instance => _instance;
-
-    protected virtual void Awake()
+    public class SingletonHelper<T> : MonoBehaviour where T : SingletonHelper<T>
     {
-        if (!_instance)
+        private static T _instance = null;
+        public static T Instance => _instance;
+
+        protected virtual void Awake()
         {
-            _instance = this as T;
-        }else if (_instance && _instance != this)
-        {
-            Destroy(gameObject);
+            if (!_instance)
+            {
+                _instance = this as T;
+            }
+            else if (_instance && _instance != this)
+            {
+                Destroy(gameObject);
+            }
         }
     }
+
 }
+
