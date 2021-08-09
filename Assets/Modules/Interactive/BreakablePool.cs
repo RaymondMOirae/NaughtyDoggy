@@ -4,28 +4,32 @@ using System.Collections.Generic;
 using NaughtyDoggy.Fluid;
 using UnityEngine;
 
-public class BreakablePool : MonoBehaviour
+namespace NaughtyDoggy.Interactive
 {
-    [SerializeField] private PBF_Solver _fluidContainer;
-    [SerializeField] private bool _damaged = false;
-
-    private void Start()
+    public class BreakablePool : MonoBehaviour
     {
-        _fluidContainer = GetComponentInChildren<PBF_Solver>();
-    }
+        [SerializeField] private PBF_Solver _fluidContainer;
+        [SerializeField] private bool _damaged = false;
 
-    private void Response()
-    {
-        if (!_damaged)
+        private void Start()
         {
-            _damaged = true;
-            LoosePoolWall();
+            _fluidContainer = GetComponentInChildren<PBF_Solver>();
         }
-    }
 
-    private void LoosePoolWall()
-    {
-        _fluidContainer.BoundaryMax.x = 89.93f;
-        _fluidContainer.BoundaryMax.z = 35.4f;
+        private void Response()
+        {
+            if (!_damaged)
+            {
+                _damaged = true;
+                LoosePoolWall();
+            }
+        }
+
+        private void LoosePoolWall()
+        {
+            // todo: redo hard-coded break extends as serialize field
+            _fluidContainer.BoundaryMax.x = 89.93f;
+            _fluidContainer.BoundaryMax.z = 35.4f;
+        }
     }
 }

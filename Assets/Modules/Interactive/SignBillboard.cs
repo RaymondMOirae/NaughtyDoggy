@@ -2,19 +2,24 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-public class SignBillboard : MonoBehaviour
+
+namespace Interactive
 {
-    private Camera _mainCam;
-    public Vector3 offset = new Vector3(0, 180);
-
-    private void Start()
+    public class SignBillboard : MonoBehaviour
     {
-        _mainCam = Camera.main;
+        private Camera _mainCam;
+        public Vector3 offset = new Vector3(0, 180);
+
+        private void Start()
+        {
+            _mainCam = Camera.main;
+        }
+
+        void Update()
+        {
+            transform.LookAt(_mainCam.transform);
+            transform.Rotate(offset, Space.Self);
+        }
     }
 
-    void Update()
-    { 
-        transform.LookAt(_mainCam.transform);
-        transform.Rotate(offset, Space.Self);
-    }
 }

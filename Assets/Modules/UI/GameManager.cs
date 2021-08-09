@@ -4,6 +4,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using NaughtyDoggy.Helper;
+using UnityEngine.SceneManagement;
 using UnityEngine.SocialPlatforms.Impl;
 
 namespace NaughtyDoggy.UI
@@ -19,18 +20,34 @@ namespace NaughtyDoggy.UI
         public ScoreStaging _scoreStage;
         private Queue<float> _scoreStagingQueue;
         private bool _stagingCR_running;
+        private bool _gameRunning;
+        private bool _countDownEnd;
+
+        public bool CountDownEnd 
+        { 
+            set => _countDownEnd = value;
+            get => _countDownEnd;
+        }
 
         // Start is called before the first frame update
         void Start()
         {
+            _stagingCR_running = false;
+            _gameRunning = true;
+            _countDownEnd = false;
+            
             _scoreStagingQueue = new Queue<float>();
             UpdateScore(0.0f);
         }
 
-        // Update is called once per frame
-        void Update()
+        public void RestartGame()
         {
+            SceneManager.LoadScene(0);
+        }
 
+        public void EndGame()
+        {
+            Application.Quit();
         }
 
         void UpdateScore(float scoreToAdd)
@@ -64,6 +81,11 @@ namespace NaughtyDoggy.UI
                 yield return new WaitForSeconds(StagingInterval);
             }
             _stagingCR_running = false;
+        }
+
+        public void EndTitleDisplay()
+        {
+            _totalScoreText.text = "Time Up!";
         }
     }
 

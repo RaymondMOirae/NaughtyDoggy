@@ -3,23 +3,34 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class ScoreStaging : MonoBehaviour
+namespace NaughtyDoggy.UI
 {
-    public TextMeshProUGUI scoreText;
-    public float AnimationTime;
-    void Start()
+    public class ScoreStaging : MonoBehaviour
     {
-        transform.localScale = Vector2.zero;
-    }
+        public TextMeshProUGUI scoreText;
+        public float AnimationTime;
+        void Start()
+        {
+            transform.localScale = Vector2.zero;
+        }
 
-    public void OpenStage(float score)
-    {
-        scoreText.text = score.ToString();
-        transform.LeanScale(Vector2.one, AnimationTime).setEaseInExpo();
-    }
+        public void OpenStage(float score)
+        {
+            scoreText.text = score.ToString();
+            transform.LeanScale(Vector2.one, AnimationTime).setEaseInExpo();
+        }
 
-    public void CloseStage()
-    {
-        transform.LeanScale(Vector2.zero, AnimationTime).setEaseOutExpo();
+        public void OpenStage(string content)
+        {
+            scoreText.text = content;
+            transform.LeanScale(Vector2.one, AnimationTime).setEaseInExpo();
+        }
+
+        public void CloseStage()
+        {
+            transform.LeanScale(Vector2.zero, AnimationTime).setEaseOutExpo();
+        }
     }
+        
 }
+

@@ -2,29 +2,36 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using NaughtyDoggy.Interactive;
 
-public class Rake : MonoBehaviour
+namespace NaughtyDoggy.Grass
 {
-    private PickableItem _rakeBody;
-    private void Start()
+    public class Rake : MonoBehaviour
     {
-        _rakeBody = GetComponentInParent<PickableItem>();
-    }
+        private PickableItem _rakeBody;
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("CollisionBasedInteract") && _rakeBody.BeHeld)
+        private void Start()
         {
-            other.BroadcastMessage("Response");
+            _rakeBody = GetComponentInParent<PickableItem>();
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.CompareTag("CollisionBasedInteract") && _rakeBody.BeHeld)
+            {
+                other.BroadcastMessage("Response");
+            }
+        }
+
+        private void OnCollisionEnter(Collision other)
+        {
+            if (other.collider.CompareTag("CollisionBasedInteract") && _rakeBody.BeHeld)
+            {
+                other.gameObject.BroadcastMessage("Response", SendMessageOptions.DontRequireReceiver);
+            }
+
         }
     }
 
-    private void OnCollisionEnter(Collision other)
-    {
-        if (other.collider.CompareTag("CollisionBasedInteract") && _rakeBody.BeHeld)
-        {
-            other.gameObject.BroadcastMessage("Response", SendMessageOptions.DontRequireReceiver);
-        }
-        
-    }
 }
+

@@ -1,4 +1,4 @@
-// GENERATED AUTOMATICALLY FROM 'Assets/Resources/PlayerInputActions.inputactions'
+// GENERATED AUTOMATICALLY FROM 'Assets/Modules/PlayerControls/PlayerInputActions.inputactions'
 
 using System;
 using System.Collections;
@@ -32,6 +32,22 @@ namespace NaughtyDoggy.PlayerControls
                     ""name"": ""Interact"",
                     ""type"": ""Button"",
                     ""id"": ""8f2d6766-dcb7-4d4b-bc3a-d1f6f93e1f35"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""StartMenu"",
+                    ""type"": ""Button"",
+                    ""id"": ""b8723825-2f70-4cf8-9a3b-f38c4a286d7e"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""Terminate"",
+                    ""type"": ""Button"",
+                    ""id"": ""9abef24c-7981-4785-82e3-e67ce33566a5"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
@@ -125,6 +141,50 @@ namespace NaughtyDoggy.PlayerControls
                     ""action"": ""Interact"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""432bf4b2-293a-4b8f-9d03-5cda6cdc2fbb"",
+                    ""path"": ""<XInputController>/start"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""StartMenu"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""919beea5-ae5d-4af3-8602-596ef8e955e9"",
+                    ""path"": ""<Keyboard>/enter"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""StartMenu"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8c1cfc62-4e84-45be-9e43-d2c96f9e4bd7"",
+                    ""path"": ""<XInputController>/select"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Terminate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1eb7e7df-734a-4fb2-8739-f9bae34f1eb9"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Terminate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -135,6 +195,8 @@ namespace NaughtyDoggy.PlayerControls
             m_PlayerController_Map = asset.FindActionMap("PlayerController_Map", throwIfNotFound: true);
             m_PlayerController_Map_Movement = m_PlayerController_Map.FindAction("Movement", throwIfNotFound: true);
             m_PlayerController_Map_Interact = m_PlayerController_Map.FindAction("Interact", throwIfNotFound: true);
+            m_PlayerController_Map_StartMenu = m_PlayerController_Map.FindAction("StartMenu", throwIfNotFound: true);
+            m_PlayerController_Map_Terminate = m_PlayerController_Map.FindAction("Terminate", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -186,12 +248,16 @@ namespace NaughtyDoggy.PlayerControls
         private IPlayerController_MapActions m_PlayerController_MapActionsCallbackInterface;
         private readonly InputAction m_PlayerController_Map_Movement;
         private readonly InputAction m_PlayerController_Map_Interact;
+        private readonly InputAction m_PlayerController_Map_StartMenu;
+        private readonly InputAction m_PlayerController_Map_Terminate;
         public struct PlayerController_MapActions
         {
             private @PlayerInputActions m_Wrapper;
             public PlayerController_MapActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
             public InputAction @Movement => m_Wrapper.m_PlayerController_Map_Movement;
             public InputAction @Interact => m_Wrapper.m_PlayerController_Map_Interact;
+            public InputAction @StartMenu => m_Wrapper.m_PlayerController_Map_StartMenu;
+            public InputAction @Terminate => m_Wrapper.m_PlayerController_Map_Terminate;
             public InputActionMap Get() { return m_Wrapper.m_PlayerController_Map; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -207,6 +273,12 @@ namespace NaughtyDoggy.PlayerControls
                     @Interact.started -= m_Wrapper.m_PlayerController_MapActionsCallbackInterface.OnInteract;
                     @Interact.performed -= m_Wrapper.m_PlayerController_MapActionsCallbackInterface.OnInteract;
                     @Interact.canceled -= m_Wrapper.m_PlayerController_MapActionsCallbackInterface.OnInteract;
+                    @StartMenu.started -= m_Wrapper.m_PlayerController_MapActionsCallbackInterface.OnStartMenu;
+                    @StartMenu.performed -= m_Wrapper.m_PlayerController_MapActionsCallbackInterface.OnStartMenu;
+                    @StartMenu.canceled -= m_Wrapper.m_PlayerController_MapActionsCallbackInterface.OnStartMenu;
+                    @Terminate.started -= m_Wrapper.m_PlayerController_MapActionsCallbackInterface.OnTerminate;
+                    @Terminate.performed -= m_Wrapper.m_PlayerController_MapActionsCallbackInterface.OnTerminate;
+                    @Terminate.canceled -= m_Wrapper.m_PlayerController_MapActionsCallbackInterface.OnTerminate;
                 }
                 m_Wrapper.m_PlayerController_MapActionsCallbackInterface = instance;
                 if (instance != null)
@@ -217,6 +289,12 @@ namespace NaughtyDoggy.PlayerControls
                     @Interact.started += instance.OnInteract;
                     @Interact.performed += instance.OnInteract;
                     @Interact.canceled += instance.OnInteract;
+                    @StartMenu.started += instance.OnStartMenu;
+                    @StartMenu.performed += instance.OnStartMenu;
+                    @StartMenu.canceled += instance.OnStartMenu;
+                    @Terminate.started += instance.OnTerminate;
+                    @Terminate.performed += instance.OnTerminate;
+                    @Terminate.canceled += instance.OnTerminate;
                 }
             }
         }
@@ -225,6 +303,8 @@ namespace NaughtyDoggy.PlayerControls
         {
             void OnMovement(InputAction.CallbackContext context);
             void OnInteract(InputAction.CallbackContext context);
+            void OnStartMenu(InputAction.CallbackContext context);
+            void OnTerminate(InputAction.CallbackContext context);
         }
     }
 }

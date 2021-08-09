@@ -1,32 +1,39 @@
 using System.Collections;
 using System.Collections.Generic;
+using NaughtyDoggy.UI;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CountDown : MonoBehaviour
+namespace NaughtyDoggy.Interactive
 {
-    public float CountDownTime;
-
-    public float LeftTime;
-    private Slider _slider;
-    
-    void Start()
+    public class CountDown : MonoBehaviour
     {
-        _slider = GetComponent<Slider>();
-        LeftTime = CountDownTime;
-        _slider.maxValue = CountDownTime;
-    }
+        public float CountDownTime;
 
-    // Update is called once per frame
-    void Update()
-    {
+        public float LeftTime;
+        private Slider _slider;
         
-        LeftTime -= Time.deltaTime;
-        if (LeftTime < 0)
+        void Start()
         {
-            LeftTime = 0;
+            _slider = GetComponent<Slider>();
+            LeftTime = CountDownTime;
+            _slider.maxValue = CountDownTime;
         }
-        
-        _slider.value = LeftTime;
+
+        // Update is called once per frame
+        void Update()
+        {
+            
+            LeftTime -= Time.deltaTime;
+            if (LeftTime < 0)
+            {
+                if (!GameManager.Instance.CountDownEnd)
+                    GameManager.Instance.EndTitleDisplay();
+                LeftTime = 0;
+            }
+            
+            _slider.value = LeftTime;
+        }
     }
 }
+

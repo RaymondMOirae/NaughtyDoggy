@@ -113,6 +113,7 @@ namespace NaughtyDoggy.Fluid
         private void ComputeParticleBuffer()
         {
             DispatchKernel(_pbfBufferSwapKernel);
+            
             DispatchKernel(_predictPositionKernel);
 
             for (int i = 0; i < solverIteration; i++)
@@ -125,7 +126,7 @@ namespace NaughtyDoggy.Fluid
 
             // only used for debug
             // _particleBufferWRITE.GetData(_particleData);
-
+            
             SwapBuffer(ref _particleBufferREAD, ref _particleBufferWRITE);
         }
 

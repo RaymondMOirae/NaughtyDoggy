@@ -1548,7 +1548,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &1806096804
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4755,15 +4755,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5666091253480185953, guid: 4e298ce0ac194ef41b31990ee75766fc, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 10.31
+      value: 10.03
       objectReference: {fileID: 0}
     - target: {fileID: 5666091253480185953, guid: 4e298ce0ac194ef41b31990ee75766fc, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 17.16
+      value: 14.77
       objectReference: {fileID: 0}
     - target: {fileID: 5666091253480185953, guid: 4e298ce0ac194ef41b31990ee75766fc, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 27.69
+      value: 27.06
       objectReference: {fileID: 0}
     - target: {fileID: 5666091253480185953, guid: 4e298ce0ac194ef41b31990ee75766fc, type: 3}
       propertyPath: m_LocalRotation.w
@@ -4796,6 +4796,10 @@ PrefabInstance:
     - target: {fileID: 5666091253480185957, guid: 4e298ce0ac194ef41b31990ee75766fc, type: 3}
       propertyPath: m_Name
       value: Main Camera
+      objectReference: {fileID: 0}
+    - target: {fileID: 5666091253480185958, guid: 4e298ce0ac194ef41b31990ee75766fc, type: 3}
+      propertyPath: fluidBlendWeight
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5666091253628838308, guid: 4e298ce0ac194ef41b31990ee75766fc, type: 3}
       propertyPath: far clip plane
@@ -5376,19 +5380,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8496145896621861414, guid: 86797cc70df8aac44b7f334617ff8a73, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.085432
+      value: 0.23728737
       objectReference: {fileID: 0}
     - target: {fileID: 8496145896621861414, guid: 86797cc70df8aac44b7f334617ff8a73, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.085432
+      value: 0.23728737
       objectReference: {fileID: 0}
     - target: {fileID: 8496145896621861414, guid: 86797cc70df8aac44b7f334617ff8a73, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.085432
+      value: 0.23728737
       objectReference: {fileID: 0}
     - target: {fileID: 8496145896621861414, guid: 86797cc70df8aac44b7f334617ff8a73, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.45
+      value: -3.84
       objectReference: {fileID: 0}
     - target: {fileID: 8496145896621861414, guid: 86797cc70df8aac44b7f334617ff8a73, type: 3}
       propertyPath: m_LocalPosition.y
@@ -5396,7 +5400,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8496145896621861414, guid: 86797cc70df8aac44b7f334617ff8a73, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 3.25
+      value: 0.83
       objectReference: {fileID: 0}
     - target: {fileID: 8496145896621861414, guid: 86797cc70df8aac44b7f334617ff8a73, type: 3}
       propertyPath: m_LocalRotation.w
@@ -5440,7 +5444,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8496145896621861417, guid: 86797cc70df8aac44b7f334617ff8a73, type: 3}
       propertyPath: BoundaryMax.x
-      value: 25
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 8496145896621861417, guid: 86797cc70df8aac44b7f334617ff8a73, type: 3}
       propertyPath: BoundaryMax.y
@@ -5448,7 +5452,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8496145896621861417, guid: 86797cc70df8aac44b7f334617ff8a73, type: 3}
       propertyPath: BoundaryMax.z
-      value: 25
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 8496145896621861417, guid: 86797cc70df8aac44b7f334617ff8a73, type: 3}
       propertyPath: BoundaryMin.x

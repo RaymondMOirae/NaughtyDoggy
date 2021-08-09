@@ -5,65 +5,65 @@ using NaughtyDoggy.Interactive;
 using NaughtyDoggy.Helper;
 using UnityEngine;
 
-public class PickableItem : InteractiveItemBase
+namespace NaughtyDoggy.Interactive
 {
-    [SerializeField] private GameObject _handle;
-    [SerializeField] private GameObject _holder;
-    private Transform _dynamicObjParent;
-    private Rigidbody _rigidbody;
-    
-    public bool BeHeld = false;
-    
-    protected override void Start()
+    public class PickableItem : InteractiveItemBase
     {
-        base.Start();
-        _handle = transform.Find("Handle").gameObject;
-        _rigidbody = GetComponent<Rigidbody>();
-        _dynamicObjParent = transform.parent;
-    }
-
-    private void FixedUpdate()
-    {
+        [SerializeField] private GameObject _handle;
+        [SerializeField] private GameObject _holder;
+        private Transform _dynamicObjParent;
+        private Rigidbody _rigidbody;
         
-    }
-
-    public override void HandleInteraction()
-    {
-        base.HandleInteraction();
-        if (!_holder)
+        public bool BeHeld = false;
+        
+        protected override void Start()
         {
-            _holder = GameObject.FindWithTag("Player").transform.Find("Holder").gameObject;
+            base.Start();
+            _handle = transform.Find("Handle").gameObject;
+            _rigidbody = GetComponent<Rigidbody>();
+            _dynamicObjParent = transform.parent;
+        }
+
+        public override void HandleInteraction()
+        {
+            base.HandleInteraction();
             if (!_holder)
             {
-                Debug.LogError("Player object should be tagged with \'Player\'");
+                _holder = GameObject.FindWithTag("Player").transform.Find("Holder").gameObject;
+                if (!_holder)
+                {
+                    Debug.LogError("Player object should be tagged with \'Player\'");
+                }
+            }
+
+            if (!BeHeld)
+            {
+                BeHeld = true;
+                transform.SetParent(_holder.transform, false);
+                transform.localPosition =  - MathHelper.Vec3Mul(_handle.transform.localPosition, transform.localScale);
+                transform.rotation = _holder.transform.rotation;
+                _rigidbody.useGravity = false;
+                _rigidbody.isKinematic = true;
+                DeactivateSign();
+            }
+            else
+            {
+                BeHeld = false;
+                _rigidbody.useGravity = true;
+                _rigidbody.isKinematic = false;
+                transform.SetParent(_dynamicObjParent, true);
+            }
+                
+        }
+
+        protected override void ActivateSign()
+        {
+            if (!BeHeld)
+            {
+                base.ActivateSign();
             }
         }
-
-        if (!BeHeld)
-        {
-            BeHeld = true;
-            transform.SetParent(_holder.transform, false);
-            transform.localPosition =  - MathHelper.Vec3Mul(_handle.transform.localPosition, transform.localScale);
-            transform.rotation = _holder.transform.rotation;
-            _rigidbody.useGravity = false;
-            _rigidbody.isKinematic = true;
-            DeactivateSign();
-        }
-        else
-        {
-            BeHeld = false;
-            _rigidbody.useGravity = true;
-            _rigidbody.isKinematic = false;
-            transform.SetParent(_dynamicObjParent, true);
-        }
-            
     }
-
-    protected override void ActivateSign()
-    {
-        if (!BeHeld)
-        {
-            base.ActivateSign();
-        }
-    }
+    
 }
+

@@ -61,7 +61,7 @@ void PredictPosition(uint3 id : SV_DispatchThreadID)
     //      - Predict position
     //      - Check Boundaries
     ParticleBufferWRITE[id.x].extForce = Gravity.xyz;
-    ParticleBufferWRITE[id.x].velocity = ParticleBufferREAD[id.x].velocity + ParticleBufferWRITE[id.x].extForce * DeltaTime;
+    ParticleBufferWRITE[id.x].velocity = ParticleBufferWRITE[id.x].velocity + ParticleBufferWRITE[id.x].extForce * DeltaTime;
     ParticleBufferWRITE[id.x].nextPosition = ParticleBufferWRITE[id.x].curPosition + ParticleBufferWRITE[id.x].velocity * DeltaTime;
 }
 

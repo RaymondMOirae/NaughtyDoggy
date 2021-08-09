@@ -121,13 +121,13 @@ Shader "Unlit/PBF_FluidShading"
 				return float4(sum, sum, sum, curPixel.w);
 			}
 			
-			float3 DepthToViewPos(float curPixel, float2 uv)
+			float3 DepthToViewPos(float curPixelDepth, float2 uv)
 			{
 				uv *= _MainTex_TexelSize.xy;
 				
 				float3 clip_Vec = float3(uv * 2.0 - 1.0, 1.0) * _ProjectionParams.z;
 				float3 view_Vec = mul(unity_CameraInvProjection, clip_Vec.xyzz).xyz;
-				float3 view_Pos = view_Vec * Linear01Depth(curPixel);
+				float3 view_Pos = view_Vec * Linear01Depth(curPixelDepth);
 				
 				return view_Pos;
 			}
@@ -189,8 +189,12 @@ Shader "Unlit/PBF_FluidShading"
 				float3 fresnel = _Reflectance + (1 - _Reflectance) * pow(1 - dot(worldNormal, worldViewDir), 5);
 				
                 float3 color = ambient + specular + lerp(diffuse, reflection, saturate(fresnel));
+
+				// only used for visualize normal debug
+				//worldNormal = worldNormal / 2 + 0.5;
 				
 				return float4(color, curPixel.r);
+				//return float4(worldNormal.xyz, curPixel.r);
 			}
 			
 

@@ -64,7 +64,7 @@ Shader "Unlit/PBF_ParticleBatching"
 
             struct v2f
             {
-				float zDepth : TEXCOORD0;
+				// float zDepth : TEXCOORD0;
                 float4 vertex : SV_POSITION;
             };
 
@@ -78,16 +78,15 @@ Shader "Unlit/PBF_ParticleBatching"
 				#endif
 
             	o.vertex = UnityWorldToClipPos(v.vertex);
-            	// o.vertex = UnityObjectToClipPos(v.vertex);
 				
-				o.zDepth = o.vertex.z / o.vertex.w;
+				// o.zDepth = o.vertex.z / o.vertex.w;
             	
                 return o;
             }
             
             fixed4 frag (v2f i) : SV_Target
             {
-            	float zDepth = i.zDepth;
+            	float zDepth = i.vertex.z;
             	#if !defined(UNITY_REVERSED_Z)
 					zDepth = zDepth * 0.5 + 0.5;
             	#endif

@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using NaughtyDoggy.Helper;
 using NaughtyDoggy.Interactive;
+using NaughtyDoggy.UI;
 
 namespace NaughtyDoggy.PlayerControls
 {
@@ -111,7 +112,10 @@ namespace NaughtyDoggy.PlayerControls
             PlayerInputs.GetInstance.PlayerController_Map.Movement.started   += context => HandleDirectionInput(context);
             PlayerInputs.GetInstance.PlayerController_Map.Movement.performed += context => HandleDirectionInput(context);
             PlayerInputs.GetInstance.PlayerController_Map.Movement.canceled  += context => HandleDirectionInput(context);
-            PlayerInputs.GetInstance.PlayerController_Map.Interact.started += context => LaunchInteraction();
+            PlayerInputs.GetInstance.PlayerController_Map.Interact.started   += context => LaunchInteraction();
+            PlayerInputs.GetInstance.PlayerController_Map.StartMenu.performed += context => GameManager.Instance.RestartGame();
+            PlayerInputs.GetInstance.PlayerController_Map.StartMenu.performed += context => GameManager.Instance.RestartGame();
+            PlayerInputs.GetInstance.PlayerController_Map.Terminate.performed += context => GameManager.Instance.EndGame();
         }
         
         private void InitComponents()
